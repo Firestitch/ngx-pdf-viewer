@@ -1,0 +1,58 @@
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    padding: 12px;
+    background-color: #ccc;
+    box-sizing: border-box;  
+
+    .header-content {
+      display: flex;
+      align-items: center; 
+
+      .name {
+        font-size: 120%;
+        flex-grow: 1;
+      }
+
+      .progress {
+        color: #fff;
+        margin-right: 14px;
+        text-align: right;
+
+        .percent {
+          font-size: 90%;
+        }
+      }
+    }
+  }
+
+  .pdf {
+    flex-grow: 1;
+    overflow: auto;
+  }
+}
+
+
+mat-sidenav {
+  width: 400px;
+
+  .sidenav-container {
+    padding: 20px;
+  }
+
+  .sidenav-container {
+    .heading {
+      font-size: 125%;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}

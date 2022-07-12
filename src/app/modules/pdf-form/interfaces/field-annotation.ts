@@ -1,0 +1,30 @@
+export interface FieldAnnotation {
+  actions: any,
+  alternativeText: string,
+  annotationFlags: number,
+  annotationType: number,
+  backgroundColor: any,
+  borderColor: any,
+  borderStyle: any,
+  color: any,
+  comb: boolean,
+  contentsObj: any,
+  defaultAppearanceData: any,
+  defaultFieldValue: any,
+  fieldFlags: number,
+  fieldName: string
+  fieldType: 'Tx'
+  fieldValue: string
+  hasAppearance: boolean
+  hasOwnCanvas: boolean
+  hidden: boolean
+  id: string
+  maxLen: number
+  modificationDate: any
+  multiLine: boolean,
+  readOnly: boolean
+  rect: any,
+  subtype: 'Widget'
+  textAlignment: any
+  value: any
+}

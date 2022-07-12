@@ -1,0 +1,120 @@
+<div class="input"></div>
+
+<!-- <mat-form-field appearance="outline">
+  <mat-label>Enter text</mat-label>
+  <input
+    matInput
+    (ngModelChange)="inputChange()"
+    (click)="inputFocus()"
+    [name]="'layoutComponent'"
+    [ngModelOptions]="{ updateOn: 'blur' }"
+    [(ngModel)]="value">
+</mat-form-field> -->
+
+<!-- <div
+    class="sign-input"
+    [class]="'type-' + layoutComponent.type + ' subtype-' + subtype"
+    [ngClass]="{ disabled: disabled }"
+    (click)="inputFocus()">
+  <ng-container [ngSwitch]="layoutComponent.type">
+    <ng-container *ngSwitchCase="LayoutComponentType.Signature">
+      <ng-container *ngIf="subtype === 'signature'">
+        <ng-container *ngIf="
+          configs.signature === LayoutComponentConfig.SignatureEdit ||
+          configs.signature === LayoutComponentConfig.SignatureEditPrefill
+        ">
+          <ng-container *ngIf="layoutComponentValue.value?.signature; else clickSign">
+            <ng-container *ngTemplateOutlet="signature"></ng-container>
+          </ng-container>
+          <ng-template #clickSign>
+            <div class="click-sign">Click to Sign</div>
+          </ng-template>
+        </ng-container>
+
+        <ng-template #signature>
+          <app-signature-svg [svg]="layoutComponentValue.value?.signature"></app-signature-svg>
+        </ng-template>
+      </ng-container>
+
+      <ng-container *ngIf="subtype === 'name'">
+        <ng-container *ngIf="
+          configs.name === LayoutComponentConfig.NameEdit ||
+          configs.name === LayoutComponentConfig.NameEditPrefill
+        ">
+          <mat-form-field appearance="outline">
+            <input
+              matInput
+              (ngModelChange)="inputChange()"
+              (click)="inputFocus()"
+              [name]="'layoutComponent-' + layoutComponent.id + '-name'"
+              placeholder="Enter Your Name"
+              [ngModelOptions]="{ updateOn: 'blur' }"
+              [(ngModel)]="layoutComponentValue.value.name">
+          </mat-form-field>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="subtype === 'date'">
+        <ng-container *ngIf="
+          configs.date === LayoutComponentConfig.DateEdit ||
+          configs.date === LayoutComponentConfig.DateEditPrefill
+        ">
+          <mat-form-field appearance="outline" class="date">
+            <input
+              matInput
+              fsDatePicker
+              format="full-date"
+              [clear]="false"
+              [name]="'layoutComponent-' + layoutComponent.id + '-date'"
+              (ngModelChange)="inputChange()"
+              (click)="inputFocus()"
+              placeholder="Enter Date"
+              [(ngModel)]="layoutComponentValue.value.date">
+          </mat-form-field>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="LayoutComponentType.InputFieldText">
+      <mat-form-field appearance="outline">
+        <input
+          matInput
+          (ngModelChange)="inputChange()"
+          (click)="inputFocus()"
+          placeholder="Enter text"
+          [name]="'layoutComponent-' + layoutComponent.id"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          [(ngModel)]="layoutComponentValue.value.text">
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="LayoutComponentType.InputFieldDate">
+      <mat-form-field appearance="outline" class="date">
+        <input
+          matInput
+          fsDatePicker
+          format="full-date"
+          [clear]="false"
+          [name]="'layoutComponent-' + layoutComponent.id"
+          placeholder="Enter date"
+          (focus)="inputFocus()"
+          (ngModelChange)="inputChange()"
+          [(ngModel)]="layoutComponentValue.value.date">
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="LayoutComponentType.Acknowledgements">
+      <mat-checkbox
+          (change)="inputChange()"
+          [name]="'acknowledgements-' + checkboxIndex"
+          [(ngModel)]="layoutComponentValue.value.acknowledgements[checkboxIndex]">
+      </mat-checkbox>
+    </ng-container>
+  </ng-container>
+
+  <div class="note-container" *ngIf="!disabled && !hasValue">
+    <div class="note">
+      <div class="arrow"></div>
+    </div>
+  </div>
+</div> -->

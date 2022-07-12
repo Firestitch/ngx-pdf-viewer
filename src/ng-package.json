@@ -5,6 +5,6 @@
     "entryFile": "public_api.ts"
   },
   "allowedNonPeerDependencies": [
-    "monaco-editor"
+    "ngx-extended-pdf-viewer"
   ]
 }

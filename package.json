@@ -1,11 +1,11 @@
 {
-  "name": "@firestitch/text-editor",
-  "title": "Text Editor",
-  "description": "@firestitch/ngx-text-editor",
-  "version": "12.2.1",
+  "name": "@firestitch/pdf",
+  "title": "PDF",
+  "description": "@firestitch/ngx-pdf",
+  "version": "12.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Firestitch/ngx-text-editor"
+    "url": "https://github.com/Firestitch/ngx-pdf"
   },
   "author": {
     "name": "Firestitch",
@@ -16,7 +16,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Firestitch/ngx-text-editor/issues"
+    "url": "https://github.com/Firestitch/ngx-pdf/issues"
   },
   "main": "package/index.js",
   "typings": "package/index.d.ts",
@@ -27,9 +27,8 @@
     "demo:build": "cd tools && npm run cli:demo",
     "serve": "cd tools && npm run cli:serve"
   },
-  "dependencies": {
-    "monaco-editor": "^0.33.0",
-    "ngx-monaco-editor": "^12.0.0"
+  "dependencies": {    
+    "ngx-extended-pdf-viewer": "^14.0.7"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~12.2.16",
@@ -51,7 +50,10 @@
     "@firestitch/drawer": "^12.0.0",
     "@firestitch/example": "^12.0.0",
     "@firestitch/iframe": "^12.0.0",
+    "@firestitch/scroll-picker": "^12.0.0",
+    "@firestitch/datepicker": "^12.4.0",
     "@firestitch/menu": "^12.0.1",
+    "@firestitch/mask": "^12.0.0",
     "@firestitch/message": "^12.1.0",
     "codelyzer": "^6.0.0",
     "cpx": "^1.5.0",
@@ -64,7 +66,9 @@
     "rxjs": "^6.5.5",
     "tslint": "~6.1.0",
     "typescript": "^4.3.5",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.4",
+    "date-fns-tz": "^1.3.5",
+    "parse-messy-time": "^2.1.0"
   },
   "engines": {
     "node": ">=6.0.0"

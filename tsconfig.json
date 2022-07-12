@@ -3,7 +3,7 @@
   "compilerOptions": {
     "importHelpers": true,
     "paths": {
-      "@firestitch/text-editor": [
+      "@firestitch/pdf": [
         "src/public_api.ts"
       ],
       "@env": [

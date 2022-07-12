@@ -1,8 +1,0 @@
-<div class="editor-container">
-  <fs-text-editor [(ngModel)]="model" [config]="config"></fs-text-editor>
-</div>
-
-<fieldset *ngIf="model">
-  <legend>Result</legend>
-  {{ model | json }}
-</fieldset>

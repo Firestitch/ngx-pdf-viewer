@@ -1,0 +1,10 @@
+<ngx-extended-pdf-viewer
+  [ngClass]=" { 'zoom-page-width': zoom === 'page-width' }"
+  class="mat-elevation-z2"
+  [src]="src"
+  [pageViewMode]="pageViewMode"
+  [zoom]="zoom"
+  [height]="height"
+  [showToolbar]="false"
+  (pageRendered)="pageRendered.emit($event)">
+</ngx-extended-pdf-viewer>
