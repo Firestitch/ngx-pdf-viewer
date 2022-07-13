@@ -19,7 +19,10 @@ import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Field, FieldAnnotation } from '../../interfaces';
-
+import { takeUntil } from 'rxjs/operators';
+import { FieldInputComponent } from '../field-input';
+import { initField } from '../../helpers';
+import { FieldService } from '../../services';
 
 
 @Component({
@@ -27,11 +30,15 @@ import { Field, FieldAnnotation } from '../../interfaces';
   templateUrl: 'pdf-form.component.html',
   styleUrls: [ 'pdf-form.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FieldService],
 })
 export class FsPdfFormComponent implements OnInit, OnDestroy {
 
   @ViewChild(FsPdfViewerComponent)
   public pdfViewer: FsPdfViewerComponent;
+
+  @ViewChild(FieldInputComponent)
+  public fieldInput: FieldInputComponent;
 
   @Input() public pdf;
   @Input() public height;
@@ -40,7 +47,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   public started = false;
   public complete = 1;
   public total = 1;
-  public field$ = new BehaviorSubject<Field>(null);
+  public field: Field;
 
   private _destroy$ = new Subject();
 
@@ -53,16 +60,22 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     private _appRef: ApplicationRef,
     private _injector: Injector,
     private _cdRef: ChangeDetectorRef,
+    private _fieldService: FieldService,
   ) {}
 
   public ngOnInit(): void {
-    // this._fieldSelect$
-    // .pipe(
-    //   takeUntil(this._destroy$),
-    // )
-    // .subscribe((fieldAnnotation: FieldAnnotation) => {
-    //   debugger;
-    // });
+    this._fieldService.field$
+    .pipe(
+      takeUntil(this._destroy$),
+    )
+    .subscribe((field: Field) => {
+      this.field = field;
+      if(this.fieldInput) {
+        this.fieldInput.focus();
+      }
+
+      this._cdRef.markForCheck();
+    });
   }
 
   public get el(): any {
@@ -71,88 +84,58 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
   public pageRendered(event: PageRenderedEvent): void {
     setTimeout(() => {
-
       const data = this.pdfViewer.getFormData()
       .subscribe((fields) => {
+
+        const indexes = [ ... this.el.querySelectorAll(`.textWidgetAnnotation`)]
+        .reduce((accum, el, index) => {
+          return {
+            ...accum,
+            [el.getAttribute('data-annotation-id')]: index,
+          };
+        }, {});
 
         fields.forEach((data: { pageNumber: number, fieldAnnotation: FieldAnnotation }) => {
           const fieldAnnotation = data.fieldAnnotation;
           const annotation = this.el.querySelector(`.page[data-page-number="${data.pageNumber}"] .textWidgetAnnotation[data-annotation-id="${fieldAnnotation.id}"]:not(.processed)`);
 
           if(annotation) {
-            const field: Field = {
-              name: fieldAnnotation.fieldName,
-              description: fieldAnnotation.alternativeText,
-              type: 'input',
-              value: data.fieldAnnotation.fieldValue,
-              id: fieldAnnotation.id,  
-            };
-  
-            fieldAnnotation.fieldName.split('|')
-            .forEach((part) => {
-              const index = part.indexOf(':');             
-              if(index === -1) {
-                switch(part) {
-                  case 'name':
-                    field.numeric = true;
-                    break;                  
-
-                  default:
-                    field.name = part;
-                }
-              } else {
-                const value = part.substring(index + 1);
-                switch(part.substring(0,index)) {
-                  case 'name':
-                    field.name = value;
-                    break;
-                    
-                    case 'label':
-                      field.label = value;
-                      break;
-                  
-                    case 'type':
-                      field.type = value as any;
-                      break;
-                }
-                
-                
-              }
-            });
-
+            const field = initField(fieldAnnotation, indexes);
             
             annotation.classList.add('processed');
             const injector = Injector.create({
               parent: this._injector,
               providers: [
                 {
-                  provide: 'field',
-                  useValue: field,
+                  provide: 'fieldService',
+                  useValue: this._fieldService,
                 },
                 {
-                  provide: 'fieldSelect$',
-                  useValue: this.field$,
+                  provide: 'field',
+                  useValue: field,
                 },
               ],
             });
 
             const componentPortal = new ComponentPortal(FieldComponent, null, injector);
-
             const domPortalOutlet = new DomPortalOutlet(
               annotation,
               this._componentFactoryResolver,
               this._appRef,
               this._injector,
-            ).attach(componentPortal);
+            );
 
-            // //this._signInputComponents.push(domPortalOutlet.instance);
-
-            annotation.querySelectorAll('input')
-            .forEach((el) => el.remove());
+            const componentRef = domPortalOutlet.attach(componentPortal);
+            this._fieldService.init(field, componentRef.instance);
           }
         });
       });
     });
+  }
+  
+  public startClick(): void {
+    this.started = true;
+    this._fieldService.field = this._fieldService.getFirstField();
   }
   
   public ngOnDestroy(): void {

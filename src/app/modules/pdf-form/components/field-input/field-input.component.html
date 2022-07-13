@@ -1,0 +1,70 @@
+<form fsForm [submit]="submit" [dirtySubmitButton]="false">
+  <div class="heading">{{field.label}}</div>
+  <div 
+      class="description"
+      *ngIf="field.description">
+    {{field.description}}
+  </div>
+  <ng-container [ngSwitch]="field.type">
+    <ng-container *ngSwitchCase="FieldType.Currency">
+      <mat-form-field floatLabel="never">
+        <input
+          #input
+          matInput
+          [(ngModel)]="field.value"
+          (ngModelChange)="change()"
+          fsMask
+          format="currency"
+          name="field">
+        <div matPrefix>$&nbsp;</div>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="FieldType.Input">
+      <mat-form-field floatLabel="never">
+        <input
+          #input
+          matInput
+          [fsFormMinLength]="field.minLength"
+          [fsFormMaxLength]="field.maxLength"
+          [fsFormNumeric]="field.numeric"
+          [(ngModel)]="field.value"
+          (ngModelChange)="change()"
+          [attr.maxLength]="field.maxLength"
+          name="field">
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="FieldType.Birthdate">
+      <mat-form-field floatLabel="never">
+        <input
+          #input
+          matInput
+          fsDatePickerBirthday
+          [(ngModel)]="field.value"
+          (ngModelChange)="change()"
+          name="field">
+      </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="FieldType.Date">
+      <mat-form-field floatLabel="never">
+        <input
+          #input
+          matInput
+          fsDatePicker
+          [(ngModel)]="field.value"
+          (ngModelChange)="change()"
+          name="field">
+      </mat-form-field>
+    </ng-container>
+  </ng-container>
+
+  <button
+      *ngIf="nextField"
+      mat-raised-button
+      color="primary"
+      type="submit">
+    Next
+  </button>
+</form>

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngClass]="{ started: started }">
   <div class="header">
     <div class="header-content">
       <div class="name">
@@ -7,6 +7,7 @@
       <button
           *ngIf="!started"
           type="button"
+          color="primary"
           mat-raised-button
           (click)="startClick()">
         Get Started
@@ -14,7 +15,10 @@
       <ng-container *ngIf="started">
         <div class="progress">
           {{complete}} of {{total}}
-          <div class="percent">{{(complete/total) * 100  | number:'1.0-0'}}% Complete</div>
+          <!-- <mat-progress-bar
+            [value]="(complete/total) * 100">
+          </mat-progress-bar> -->
+          <div class="percent">{{(complete/total) * 100  | number:'1.0-0'}}% Complete</div> 
         </div>
         <button
             *ngIf="complete < total"
@@ -22,13 +26,6 @@
             mat-raised-button
             (click)="nextClick()">
           Next
-        </button>
-        <button
-            *ngIf="complete === total"
-            type="button"
-            mat-raised-button
-            (click)="finishClick()">
-          Finish
         </button>
       </ng-container>
     </div>
@@ -42,59 +39,10 @@
           [position]="'end'"
           [fixedInViewport]="false">
         <div class="sidenav-container">
-          <ng-container *ngIf="(field$ | async) as field">
-            <div class="heading">{{field.label}}</div>
-            <div 
-                class="description"
-                *ngIf="field.description">
-              {{field.description}}
-            </div>
-            <ng-container [ngSwitch]="field.type">
-              <ng-container *ngSwitchCase="'currency'">
-                <mat-form-field floatLabel="never">
-                  <input
-                    matInput
-                    [(ngModel)]="currency"
-                    fsMask
-                    format="currency"
-                    name="field"
-                    placeholder="Currency">
-                  <div matPrefix>$&nbsp;</div>
-                </mat-form-field>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'input'">
-                <mat-form-field floatLabel="never">
-                  <input
-                    matInput
-                    [placeholder]="field.label"
-                    [(ngModel)]="field.value"
-                    name="field">
-                </mat-form-field>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'birthdate'">
-                <mat-form-field floatLabel="never">
-                  <input
-                    matInput
-                    fsDatePickerBirthday
-                    [placeholder]="field.label"
-                    [(ngModel)]="field.value"
-                    name="field">
-                </mat-form-field>
-              </ng-container>
-
-              <ng-container *ngSwitchCase="'date'">
-                <mat-form-field floatLabel="never">
-                  <input
-                    matInput
-                    fsDatePicker
-                    [placeholder]="field.label"
-                    [(ngModel)]="field.value"
-                    name="field">
-                </mat-form-field>
-              </ng-container>
-            </ng-container>
+          <ng-container *ngIf="field">
+            <app-field-input 
+              [field]="field">
+            </app-field-input>
           </ng-container>
         </div>
       </mat-sidenav>

@@ -6,4 +6,7 @@ export interface Field {
   value?: any,
   id?: string,  
   numeric?: boolean,  
+  maxLength?: number; 
+  minLength?: number;
+  index?: number;
 }

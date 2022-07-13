@@ -8,11 +8,16 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 import { FsMaskModule } from '@firestitch/mask';
+import { FsFormModule } from '@firestitch/form';
+import { FsCommonModule } from '@firestitch/common';
 import { FsDatePickerModule } from '@firestitch/datepicker';
+import { FsDateModule } from '@firestitch/date';
 
 import { FsPdfFormComponent } from './components/pdf-form/pdf-form.component';
 import { FsPdfViewerModule } from '../pdf-viewer/fs-pdf-viewer.module';
 import { FieldComponent } from './components/field';
+import { FieldInputComponent } from './components';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 @NgModule({
@@ -24,16 +29,21 @@ import { FieldComponent } from './components/field';
     MatInputModule,
     MatFormFieldModule,
     MatSidenavModule,
-    
+    MatProgressBarModule,
+
+    FsFormModule,
+    FsCommonModule,
     FsPdfViewerModule,   
     FsMaskModule,
     FsDatePickerModule,
+    FsDateModule,
   ],
   exports: [
     FsPdfFormComponent,
   ],
   declarations: [
     FieldComponent,
+    FieldInputComponent,
     FsPdfFormComponent,
   ]
 })

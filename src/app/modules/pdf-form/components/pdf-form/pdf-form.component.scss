@@ -6,20 +6,20 @@
 
   .header {
     padding: 12px;
-    background-color: #ccc;
+    background-color: #494949;
     box-sizing: border-box;  
+    color: #fff;
 
     .header-content {
       display: flex;
       align-items: center; 
 
       .name {
-        font-size: 120%;
+        font-size: 130%;
         flex-grow: 1;
       }
 
       .progress {
-        color: #fff;
         margin-right: 14px;
         text-align: right;
 
@@ -45,14 +45,27 @@ mat-sidenav {
   }
 
   .sidenav-container {
-    .heading {
-      font-size: 125%;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
 
-    mat-form-field {
+  }
+}
+
+:host ::ng-deep {
+  .textWidgetAnnotation input {
+    display: none;
+  }
+
+  .container:not(.started) {
+    .mat-drawer-container::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #777;
+      display: block;
       width: 100%;
+      height: 100%;
+      opacity: 0.5;
+      z-index: 999;
     }
   }
 }

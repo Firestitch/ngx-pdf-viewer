@@ -9,16 +9,24 @@
 //   }
 // }
 
-.input {
+.field {
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
   width: 100%;
   height: 100%;
-  border: 2px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: #DCE3FF;
+  border: 1px solid #DCE3FF;
+  border-radius: 1px;
+  cursor: pointer;
 
+  &.selected,
   &:focus,
   &:hover {
-    border-color: blue;
+    border-color: #7289e4;
   }
 }
 
