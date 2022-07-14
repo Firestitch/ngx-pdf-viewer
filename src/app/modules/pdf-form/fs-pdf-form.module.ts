@@ -38,13 +38,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatCheckboxModule,
 
     FsFormModule,
-    FsCommonModule,
-    FsPdfViewerModule,   
+    FsCommonModule,  
     FsMaskModule,
     FsDatePickerModule,
     FsCheckboxGroupModule,
     FsDateModule,
     FsRadioGroupModule,
+
+    FsPdfViewerModule, 
   ],
   exports: [
     FsPdfFormComponent,
@@ -55,5 +56,4 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FsPdfFormComponent,
   ]
 })
-export class FsPdfFormModule {
-}
+export class FsPdfFormModule {}

@@ -18,13 +18,12 @@
           <!-- <mat-progress-bar
             [value]="(complete/total) * 100">
           </mat-progress-bar> -->
-          <div class="percent">{{(complete/total) * 100  | number:'1.0-0'}}% Complete</div> 
+          <div class="percent">{{(complete/total) * 100}}% Complete</div> 
         </div>
         <button
             *ngIf="complete < total"
             type="button"
-            mat-raised-button
-            (click)="nextClick()">
+            mat-raised-button>
           Next
         </button>
       </ng-container>
@@ -49,9 +48,9 @@
       </mat-sidenav>
       <mat-sidenav-content>
         <fs-pdf-viewer 
-        [pdf]="pdf"
-        (pageRendered)="pageRendered($event)">
-      </fs-pdf-viewer>
+          [pdf]="pdf"
+          (pageRendered)="pageRendered($event)">
+        </fs-pdf-viewer>
       </mat-sidenav-content>
     </mat-sidenav-container>    
     
