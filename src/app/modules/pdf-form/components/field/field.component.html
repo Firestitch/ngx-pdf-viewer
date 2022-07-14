@@ -24,6 +24,10 @@
       <img src="assets/check.svg" *ngIf="field.value.indexOf(optionValue.value) !== -1">
     </ng-container>
 
+    <ng-container *ngSwitchCase="FieldType.Signature">  
+      <img [src]="signatureSvg" *ngIf="field.value">
+    </ng-container>
+
     <ng-container *ngSwitchDefault>
       <ng-container *ngIf="field.type === FieldType.Currency || field.format === FieldFormat.Currency; else default">
         {{field.value | fsFormatCurrency }}

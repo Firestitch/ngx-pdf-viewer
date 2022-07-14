@@ -69,6 +69,7 @@
     "@firestitch/style": "^12.0.0",
     "@firestitch/clear": "^12.0.0",
     "@firestitch/store": "^12.0.0",
+    "@firestitch/signature": "^12.0.0",
     "codelyzer": "^6.0.0",
     "cpx": "^1.5.0",
     "hammerjs": "^2.0.8",

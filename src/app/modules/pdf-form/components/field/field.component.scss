@@ -37,4 +37,11 @@
   &.currency {
     justify-content: end;
   }
+
+  &.field-signature {
+    img {
+      height: 100%;
+      margin: auto;
+    }
+  }
 }

@@ -6,4 +6,5 @@ export enum FieldType {
   Currency = 'currency',
   RadioButton = 'radioButton',
   Checkbox = 'checkbox',
+  Signature = 'signature',
 }

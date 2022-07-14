@@ -7,7 +7,7 @@ import {
 
 import { MatInput } from '@angular/material/input';
 
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { FieldType } from '../../enums';
 
 import { Field } from '../../interfaces';
@@ -84,5 +84,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
       this._fieldService.selectField = this.nextField;
       this._fieldService.scrollToField(this.nextField);      
     }
+
+    return of(true);
   }
 }

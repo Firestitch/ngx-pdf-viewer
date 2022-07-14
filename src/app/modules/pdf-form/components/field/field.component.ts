@@ -12,6 +12,7 @@ import { Field } from '../../interfaces';
 import { FieldFormat, FieldType } from '../../enums';
 import { FieldService } from '../../services';
 import { filter, takeUntil, tap } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -23,7 +24,7 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
 export class FieldComponent implements OnInit, OnDestroy {
 
   @HostListener('click')
-  public click() {
+  public click(): void {
     this.select();
   }
 
@@ -38,7 +39,7 @@ export class FieldComponent implements OnInit, OnDestroy {
     @Inject('fieldService') private _fieldService: FieldService,
     @Inject('optionValue') public optionValue: { value: any, label: any },
     private _cdRef: ChangeDetectorRef,
-    private _el: ElementRef,
+    protected _sanitizer: DomSanitizer,
   ) {}
 
   public ngOnInit(): void {
@@ -93,6 +94,14 @@ export class FieldComponent implements OnInit, OnDestroy {
     } else if(this.field.type === FieldType.RadioButton) {
       this.field.value = this.optionValue.value;
     }
+  }
+
+  public get signatureSvg() {
+    if(String(this.field.value).match(/^</)) {
+      return this._sanitizer.bypassSecurityTrustUrl(`data:image/svg+xml;base64,${btoa(this.field.value)}`);
+    }
+
+    return this.field.value;
   }
 
   public ngOnDestroy(): void {

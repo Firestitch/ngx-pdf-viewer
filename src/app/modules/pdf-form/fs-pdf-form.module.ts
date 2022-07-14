@@ -14,6 +14,7 @@ import { FsDatePickerModule } from '@firestitch/datepicker';
 import { FsDateModule } from '@firestitch/date';
 import { FsCheckboxGroupModule } from '@firestitch/checkboxgroup';
 import { FsRadioGroupModule } from '@firestitch/radiogroup';
+import { FsSignatureModule } from '@firestitch/signature';
 
 import { FsPdfFormComponent } from './components/pdf-form/pdf-form.component';
 import { FsPdfViewerModule } from '../pdf-viewer/fs-pdf-viewer.module';
@@ -44,6 +45,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FsCheckboxGroupModule,
     FsDateModule,
     FsRadioGroupModule,
+    FsSignatureModule,
 
     FsPdfViewerModule, 
   ],

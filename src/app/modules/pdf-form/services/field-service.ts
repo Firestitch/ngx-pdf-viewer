@@ -88,8 +88,18 @@ export class FieldService implements OnDestroy {
   public scrollToField(field: Field): void {
     const el: any = this.containerEl.querySelector(`section[data-annotation-id="${field.id}"]`);
     if(el) {
-      this.containerEl.scroll({top: el.offsetTop, behavior: 'smooth'});
+      this.containerEl.scroll({top: this.getOffsetTop(el), behavior: 'smooth'});
     }
+  }
+
+  public getOffsetTop(el): number {
+    let top = el.offsetTop;
+    
+    if(el && !this.containerEl.isEqualNode(this.containerEl, el)) {
+      top += this.getOffsetTop(el.parent)
+    }
+
+    return top;
   }
   
   public ngOnDestroy(): void {

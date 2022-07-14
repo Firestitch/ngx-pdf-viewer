@@ -14,7 +14,6 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { MatSidenavContent } from '@angular/material/sidenav';
 
@@ -61,7 +60,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   public total = 0;
   public completePercent = 0;
   public field: Field;
-  public sidenav = {
+  public sidenav: any = {
     opened: false,
     mode: 'side',
   };
@@ -109,7 +108,6 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const data = this.pdfViewer.getFormData()
       .subscribe((formFields: { pageNumber: number, fieldAnnotation: FieldAnnotation }[]) => {
-
         const fields: Field[] = formFields
         .filter((formField) => formField.pageNumber === event.pageNumber)
         .map((formField) => initField(formField.fieldAnnotation))

@@ -46,7 +46,7 @@
           </ng-container>
         </div>
       </mat-sidenav>
-      <mat-sidenav-content>
+      <mat-sidenav-content #sidenavContainer>
         <fs-pdf-viewer 
           [pdf]="pdf"
           (pageRendered)="pageRendered($event)">
