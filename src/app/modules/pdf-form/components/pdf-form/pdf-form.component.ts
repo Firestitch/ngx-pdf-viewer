@@ -11,15 +11,21 @@ import {
   Injector,
   ChangeDetectorRef,
   ViewChild,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
-import { FieldComponent } from '../field';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
-import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
-import { Subject } from 'rxjs';
-import { Field, FieldAnnotation } from '../../interfaces';
+import { MatSidenavContent } from '@angular/material/sidenav';
+
 import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
+
+import { FieldComponent } from '../field';
+import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
+import { Field, FieldAnnotation } from '../../interfaces';
 import { FieldInputComponent } from '../field-input';
 import { initField } from '../../helpers';
 import { FieldService } from '../../services';
@@ -35,6 +41,9 @@ import { FieldType } from '../../enums';
 })
 export class FsPdfFormComponent implements OnInit, OnDestroy {
 
+  @ViewChild(MatSidenavContent, { static: true })
+  public sidenavContent: MatSidenavContent;
+
   @ViewChild(FsPdfViewerComponent)
   public pdfViewer: FsPdfViewerComponent;
 
@@ -42,12 +51,15 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   public fieldInput: FieldInputComponent;
 
   @Input() public pdf;
-  @Input() public height;
   @Input() public name;
+  @Input() public fields: { name: string, value: string }[] = [];
+
+  @Output() public fieldChange = new EventEmitter<Field>();
 
   public started = false;
   public complete = 0;
   public total = 0;
+  public completePercent = 0;
   public field: Field;
   public sidenav = {
     opened: false,
@@ -57,9 +69,6 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
 
   constructor(
-    private _element: ElementRef,
-    @Inject(DOCUMENT)
-    private _document: Document,
     private _el: ElementRef,
     private _componentFactoryResolver: ComponentFactoryResolver,
     private _appRef: ApplicationRef,
@@ -68,7 +77,8 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     private _fieldService: FieldService,
   ) {}
 
-  public ngOnInit(): void {
+  public ngOnInit(): void {  
+    this._fieldService.containerEl = this.sidenavContent.getElementRef().nativeElement;  
     this._fieldService.field$
     .pipe(
       takeUntil(this._destroy$),
@@ -76,9 +86,18 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .subscribe((field: Field) => {
       this.field = field;
       this.sidenav.opened = !!field;
-      this.complete = this._fieldService.complete;     
+      this.complete = this._fieldService.complete; 
+      this.completePercent = Math.round((this.complete/this.total) * 100) || 0;
       this.total = this._fieldService.total;
       this._cdRef.markForCheck();
+    });
+    
+    this._fieldService.fieldChange$
+    .pipe(
+      takeUntil(this._destroy$),
+    )
+    .subscribe((field: Field) => {
+      this.fieldChange.next(field);
     });
   }
 
@@ -123,6 +142,14 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
         .sort((a, b) => a.index - b.index);
 
         fields.forEach((field) => {
+          if(field.value === null) {
+            const valueField = this.fields.find((item) => item.name === field.name);
+
+            if(valueField) {
+              field.value = valueField.value;
+            }
+          }
+
           switch(field.type) {
             case FieldType.Checkbox:
             case FieldType.RadioButton:

@@ -8,7 +8,7 @@ import { Field } from '../interfaces';
 export class FieldService implements OnDestroy {
 
   public fieldComponents = new Map<Field,FieldComponent>();
-  
+  public containerEl;
 
   private _field$ = new BehaviorSubject<Field>(null);
   private _fieldChange$ = new Subject<Field>();
@@ -86,11 +86,9 @@ export class FieldService implements OnDestroy {
   }
   
   public scrollToField(field: Field): void {
-    const el = document.querySelector(`section[data-annotation-id="${field.id}"]`);
+    const el: any = this.containerEl.querySelector(`section[data-annotation-id="${field.id}"]`);
     if(el) {
-      setTimeout(() => {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-      }, 100);
+      this.containerEl.scroll({top: el.offsetTop, behavior: 'smooth'});
     }
   }
   

@@ -26,9 +26,12 @@
   }
   
   &.selected,
-  &:focus,
-  &:hover {
+  &:focus {
     background-color: #fff6a1;
+  }
+
+  &:hover {
+    background-color: #fdf9d7;
   }
 
   &.currency {

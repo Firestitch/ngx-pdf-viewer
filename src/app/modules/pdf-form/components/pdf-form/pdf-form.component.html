@@ -18,7 +18,7 @@
           <!-- <mat-progress-bar
             [value]="(complete/total) * 100">
           </mat-progress-bar> -->
-          <div class="percent">{{(complete/total) * 100}}% Complete</div> 
+          <div class="percent">{{completePercent}}% Complete</div> 
         </div>
         <button
             *ngIf="complete < total"
