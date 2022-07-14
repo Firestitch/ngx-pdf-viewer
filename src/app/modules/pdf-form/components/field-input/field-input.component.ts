@@ -76,6 +76,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   public back() {
     if(this.backField) {
       this._fieldService.selectField = this.backField;
+      this._fieldService.scrollToField(this.backField);
     }
   }
   

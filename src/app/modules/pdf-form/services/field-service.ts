@@ -95,8 +95,8 @@ export class FieldService implements OnDestroy {
   public getOffsetTop(el): number {
     let top = el.offsetTop;
     
-    if(el && !this.containerEl.isEqualNode(this.containerEl, el)) {
-      top += this.getOffsetTop(el.parent)
+    if(el && !this.containerEl.isEqualNode(el.parentNode)) {
+      top += this.getOffsetTop(el.parentNode)
     }
 
     return top;
