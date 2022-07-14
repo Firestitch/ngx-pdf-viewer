@@ -36,9 +36,9 @@
   }
 }
 
-
 mat-sidenav {
   width: 400px;
+  max-width: 100%;
 
   .sidenav-container {
     padding: 20px;
@@ -50,8 +50,13 @@ mat-sidenav {
 }
 
 :host ::ng-deep {
-  .textWidgetAnnotation input {
+  .textWidgetAnnotation input,
+  .buttonWidgetAnnotation input {
     display: none;
+  }
+
+  .mat-drawer-container {
+    height: 100%;
   }
 
   .container:not(.started) {

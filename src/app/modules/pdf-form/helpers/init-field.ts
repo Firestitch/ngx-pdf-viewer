@@ -1,24 +1,37 @@
+import { FieldType } from "../enums";
 import { Field } from "../interfaces";
 
 
-export function initField(fieldAnnotation, indexes): Field {
+export function initField(fieldAnnotation): Field {
   const field: Field = {
     name: fieldAnnotation.fieldName,
     description: fieldAnnotation.alternativeText,
-    type: 'input',
-    value: fieldAnnotation.fieldValue,
+    type: FieldType.Input,
+    value: null,
+    readonly: false,
     id: fieldAnnotation.id,
-    index: indexes[fieldAnnotation.id]
+    index: -1,
   };
+
+  const optionValue = { label: '', value: null, id: field.id };
+  let _default = null;
+
+  if(fieldAnnotation.fieldType === 'Btn') {
+    field.type = fieldAnnotation.radioButton ? FieldType.RadioButton : FieldType.Checkbox;
+  }
 
   fieldAnnotation.fieldName.split('|')
   .forEach((part) => {
     const index = part.indexOf(':');             
     if(index === -1) {
       switch(part) {
-        case 'name':
+        case 'numeric':
           field.numeric = true;
-          break;                  
+          break; 
+
+        case 'readonly':
+          field.readonly = true;
+          break;                 
 
         default:
           field.name = part;
@@ -29,29 +42,90 @@ export function initField(fieldAnnotation, indexes): Field {
         case 'name':
           field.name = value;
           break;
-          
-          case 'label':
+        
+        case 'groupLabel':
+          field.label = value;
+          break;
+
+        case 'label':
+          if(field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
+            optionValue.label = value;
+          } else {
             field.label = value;
-            break;
-        
-          case 'type':
-            field.type = value;
-            break;
-        
-          case 'maxLength':
-            field.maxLength = value;
-            break;
+          }
+          
+          break;
       
-          case 'minLength':
-            field.minLength = value;
-            break;
+        case 'type':
+          field.type = value;
+          break;
       
-          case 'numeric':
-            field.numeric = value;
-            break;
+        case 'maxLength':
+          field.maxLength = value;
+          break;
+    
+        case 'minLength':
+          field.minLength = value;
+          break;
+    
+        case 'formula':
+          field.formula = value;
+          break;
+  
+        case 'format':
+          field.format = value;
+          break;
+  
+        case 'index':
+          field.index = Number(value);
+          break;
+  
+        case 'default':
+          _default = value;
+          break;
+  
+        case 'value':
+          if(field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
+            optionValue.value = value;
+          }
+
+          break;
       }
     }
   });
+
+  if(field.type === FieldType.Checkbox) {
+    if(!Array.isArray(field.value)) {
+      field.value = [];
+    }
+
+    if(optionValue.value === null) {
+      optionValue.value = 1;
+    }
+  }
+
+  if(field.type === FieldType.RadioButton && optionValue.value === null) {
+    optionValue.value = optionValue.label;
+  }
+
+  if(field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
+    field.optionValues = [optionValue];
+  }
+
+  if(_default && field.value === null) {
+    switch(field.type) {
+      case FieldType.Date:
+      case FieldType.Birthdate:
+        if(_default === 'now') {
+          field.value = new Date();
+        }
+
+        break;
+
+      default:
+        field.value = _default;
+    }
+  }
 
   if(!field.label && field.name) {
     field.label = field.name.split(/(?=[A-Z])/)

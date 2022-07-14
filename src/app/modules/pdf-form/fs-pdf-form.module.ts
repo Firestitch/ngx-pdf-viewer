@@ -12,12 +12,16 @@ import { FsFormModule } from '@firestitch/form';
 import { FsCommonModule } from '@firestitch/common';
 import { FsDatePickerModule } from '@firestitch/datepicker';
 import { FsDateModule } from '@firestitch/date';
+import { FsCheckboxGroupModule } from '@firestitch/checkboxgroup';
+import { FsRadioGroupModule } from '@firestitch/radiogroup';
 
 import { FsPdfFormComponent } from './components/pdf-form/pdf-form.component';
 import { FsPdfViewerModule } from '../pdf-viewer/fs-pdf-viewer.module';
 import { FieldComponent } from './components/field';
 import { FieldInputComponent } from './components';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -30,13 +34,17 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatFormFieldModule,
     MatSidenavModule,
     MatProgressBarModule,
+    MatRadioModule,
+    MatCheckboxModule,
 
     FsFormModule,
     FsCommonModule,
     FsPdfViewerModule,   
     FsMaskModule,
     FsDatePickerModule,
+    FsCheckboxGroupModule,
     FsDateModule,
+    FsRadioGroupModule,
   ],
   exports: [
     FsPdfFormComponent,

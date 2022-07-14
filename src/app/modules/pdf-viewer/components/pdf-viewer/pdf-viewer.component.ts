@@ -1,20 +1,17 @@
 import {
   Component,
   EventEmitter,
-  forwardRef,
   Input,
   OnInit,
   Output,
-  ViewChild,
-  ElementRef,
   OnDestroy,
-  Inject,
   ChangeDetectionStrategy,
+  AfterContentInit,
+  ElementRef,
+  ViewChild,
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DOCUMENT } from '@angular/common';
 
-import { NgxExtendedPdfViewerService, PageRenderedEvent } from 'ngx-extended-pdf-viewer';
+import { NgxExtendedPdfViewerComponent, NgxExtendedPdfViewerService, PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 import { from, Observable } from 'rxjs';
 
 
@@ -26,10 +23,13 @@ import { from, Observable } from 'rxjs';
 })
 export class FsPdfViewerComponent implements OnInit, OnDestroy {
 
+  @ViewChild(NgxExtendedPdfViewerComponent)
+  public extendedPdfViewer: NgxExtendedPdfViewerComponent;
+
   @Input() public pdf;
   @Input() public height;
   @Input() public pageViewMode: 'infinite-scroll' | 'multiple' | 'single' = 'infinite-scroll';
-  @Input() public zoom: 'auto' | 'page-actual' | 'page-fit' | 'page-width' | string  = 'page-width';
+  @Input() public zoom: 'auto' | 'page-actual' | 'page-fit' | 'page-width' | string  = 'auto';
 
   @Output() public init = new EventEmitter();
   @Output() public pageRendered = new EventEmitter<PageRenderedEvent>();
@@ -38,11 +38,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
 
   constructor(
     private _ngxService: NgxExtendedPdfViewerService,
-    private _element: ElementRef,
-    @Inject(DOCUMENT)
-    private _document: Document,
+    private _el: ElementRef,
   ) {};
-
 
   public ngOnInit(): void {
     if(this.pageViewMode === 'infinite-scroll') {
@@ -54,11 +51,21 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
     });
   }
 
+  public pdfLoaded(): void {    
+    this.extendedPdfViewer.zoomToPageWidth = () => {
+      return Promise.resolve();
+    }
+  }
+
   public getFormData(): Observable<Array<Object>> {
     return from(this._ngxService.getFormData(true));
   }
 
   public ngOnDestroy() {
+  }
+
+  public resize(): void {
+    this._ngxService.recalculateSize();
   }
 
 }

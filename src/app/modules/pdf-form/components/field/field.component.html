@@ -1,19 +1,41 @@
-<div class="field" [tabindex]="field.index" [ngClass]="{ selected: selected }">
+<div 
+    class="field" 
+    [tabindex]="field.index" 
+    [class]="'field-' + field.type"
+    (click)="fieldClick()"
+    [ngClass]="{ 
+      selected: selected,
+      currency: field.type === FieldType.Currency || field.format === FieldFormat.Currency
+    }">
   <ng-container [ngSwitch]="field.type">
-    <ng-container *ngSwitchCase="FieldType.Currency">
-      {{field.value | fsFormatCurrency }}
-    </ng-container>
-
     <ng-container *ngSwitchCase="FieldType.Birthdate">
-      {{field.value | fsDateFormat: 'full-date' }}
+      <ng-container *ngTemplateOutlet="date"></ng-container>
     </ng-container>
 
     <ng-container *ngSwitchCase="FieldType.Date">
-      {{field.value | fsDateFormat: 'full-date' }}
+      <ng-container *ngTemplateOutlet="date"></ng-container>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="FieldType.RadioButton">
+      <img src="assets/check.svg" *ngIf="field.value === optionValue.value">
+    </ng-container>
+
+    <ng-container *ngSwitchCase="FieldType.Checkbox">
+      <img src="assets/check.svg" *ngIf="field.value.indexOf(optionValue.value) !== -1">
     </ng-container>
 
     <ng-container *ngSwitchDefault>
-      {{field.value}}
+      <ng-container *ngIf="field.type === FieldType.Currency || field.format === FieldFormat.Currency; else default">
+        {{field.value | fsFormatCurrency }}
+      </ng-container>
     </ng-container>
   </ng-container>  
 </div>
+
+<ng-template #date>
+  {{field.value | fsDateFormat: field.format || 'full-date' }}
+</ng-template>
+
+<ng-template #default>
+  {{field.value}}
+</ng-template>

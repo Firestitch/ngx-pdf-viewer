@@ -1,11 +1,10 @@
-import { DomPortalOutlet } from '@angular/cdk/portal';
-import { ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Injector } from '@angular/core';
-import { ComponentPortal } from 'ngx-toastr';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 
 @Component({
   selector: 'app-form',
   templateUrl: 'form.component.html',
+  styleUrls: ['./form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormComponent {

@@ -4,4 +4,6 @@ export enum FieldType {
   Date = 'date',
   Birthdate = 'birthdate',
   Currency = 'currency',
+  RadioButton = 'radioButton',
+  Checkbox = 'checkbox',
 }

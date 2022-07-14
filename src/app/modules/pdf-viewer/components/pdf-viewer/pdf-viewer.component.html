@@ -4,7 +4,9 @@
   [src]="src"
   [pageViewMode]="pageViewMode"
   [zoom]="zoom"
+  [textLayer]="true"
   [height]="height"
   [showToolbar]="false"
-  (pageRendered)="pageRendered.emit($event)">
+  (pageRendered)="pageRendered.emit($event)"
+  (pdfLoaded)="pdfLoaded()">
 </ngx-extended-pdf-viewer>

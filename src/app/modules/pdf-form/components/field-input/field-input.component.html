@@ -5,66 +5,116 @@
       *ngIf="field.description">
     {{field.description}}
   </div>
-  <ng-container [ngSwitch]="field.type">
-    <ng-container *ngSwitchCase="FieldType.Currency">
-      <mat-form-field floatLabel="never">
-        <input
-          #input
-          matInput
-          [(ngModel)]="field.value"
-          (ngModelChange)="change()"
-          fsMask
-          format="currency"
-          name="field">
-        <div matPrefix>$&nbsp;</div>
-      </mat-form-field>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.Input">
-      <mat-form-field floatLabel="never">
-        <input
-          #input
-          matInput
-          [fsFormMinLength]="field.minLength"
-          [fsFormMaxLength]="field.maxLength"
-          [fsFormNumeric]="field.numeric"
-          [(ngModel)]="field.value"
-          (ngModelChange)="change()"
-          [attr.maxLength]="field.maxLength"
-          name="field">
-      </mat-form-field>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.Birthdate">
-      <mat-form-field floatLabel="never">
-        <input
-          #input
-          matInput
-          fsDatePickerBirthday
-          [(ngModel)]="field.value"
-          (ngModelChange)="change()"
-          name="field">
-      </mat-form-field>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.Date">
-      <mat-form-field floatLabel="never">
-        <input
-          #input
-          matInput
-          fsDatePicker
-          [(ngModel)]="field.value"
-          (ngModelChange)="change()"
-          name="field">
-      </mat-form-field>
-    </ng-container>
+  
+  <ng-container *ngIf="!field.readonly; else readonly">
+    <ng-container [ngSwitch]="field.type">
+      <ng-container *ngSwitchCase="FieldType.Currency">
+        <mat-form-field floatLabel="never">
+          <input
+            #input
+            matInput
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()"
+            fsMask
+            format="currency"
+            name="fieldCurrency">
+          <div matPrefix>$&nbsp;</div>
+        </mat-form-field>
+      </ng-container>
+  
+      <ng-container *ngSwitchCase="FieldType.Input">
+        <mat-form-field floatLabel="never">
+          <input
+            #input
+            matInput
+            [fsFormMinLength]="field.minLength"
+            [fsFormMaxLength]="field.maxLength"
+            [fsFormNumeric]="field.numeric"
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()"
+            [attr.maxLength]="field.maxLength"
+            name="fieldInput">
+        </mat-form-field>
+      </ng-container>
+  
+      <ng-container *ngSwitchCase="FieldType.Birthdate">
+        <mat-form-field floatLabel="never">
+          <input
+            #input
+            matInput
+            fsDatePickerBirthday
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()"
+            name="fieldBirthdate">
+        </mat-form-field>
+      </ng-container>
+  
+      <ng-container *ngSwitchCase="FieldType.Date">
+        <mat-form-field floatLabel="never">
+          <input
+            #input
+            matInput
+            fsDatePicker
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()"
+            name="fieldDate">
+        </mat-form-field>
+      </ng-container>
+  
+      <ng-container *ngSwitchCase="FieldType.RadioButton">
+        <fs-radio-group
+            [(ngModel)]="field.value"
+            name="fieldRadioButton"
+            orientation="vertical"
+            (ngModelChange)="change()">
+          <mat-radio-button
+              *ngFor="let item of field.optionValues" 
+              [value]="item.value">
+            {{ item.label }}
+          </mat-radio-button>
+        </fs-radio-group>
+      </ng-container>
+  
+      <ng-container *ngSwitchCase="FieldType.Checkbox">
+        <fs-checkbox-group
+            [(ngModel)]="field.value"
+            name="fieldCheckbox"
+            orientation="vertical"
+            orientation="vertical">
+          <mat-checkbox
+              *ngFor="let item of field.optionValues" 
+              [value]="item.value">
+            {{ item.label }}
+          </mat-checkbox>
+        </fs-checkbox-group>
+      </ng-container>
+    </ng-container>  
   </ng-container>
 
-  <button
-      *ngIf="nextField"
-      mat-raised-button
-      color="primary"
-      type="submit">
-    Next
-  </button>
+  <ng-template #readonly>
+    {{field.value}}
+  </ng-template>
+
+  <div class="buttons">
+    <button
+        [disabled]="!backField"
+        mat-raised-button
+        (click)="back()"
+        type="button">
+      Back
+    </button>
+    <button
+        *ngIf="nextField"
+        mat-raised-button
+        color="primary"
+        type="submit">
+      Next
+    </button>
+    <button
+        mat-raised-button
+        (click)="close()"
+        type="button">
+      Close
+    </button>
+  </div>
 </form>

@@ -1,9 +1,10 @@
 import {
   Component, ChangeDetectionStrategy,
-  OnInit, ElementRef, OnDestroy, ChangeDetectorRef, Input, ViewChild, OnChanges, SimpleChanges, Output, EventEmitter,
+  OnInit, ElementRef, OnDestroy, ChangeDetectorRef, 
+  Input, ViewChild, OnChanges, SimpleChanges, Output, 
+  EventEmitter,
 } from '@angular/core';
 
-import { MatDialog } from '@angular/material/dialog';
 import { MatInput } from '@angular/material/input';
 
 import { Subject } from 'rxjs';
@@ -26,10 +27,11 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() public field: Field;
 
-  @Output() public fieldChange = new EventEmitter<Field>();
+  @Output() public closed = new EventEmitter<any>();
 
   public FieldType = FieldType;
   public nextField: Field;
+  public backField: Field;
 
   private _destroy$ = new Subject();
 
@@ -40,15 +42,15 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   public ngOnInit(): void {
-   
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
     if(changes.field) {
+      this.backField = this._fieldService.getBackField(this.field);
       this.nextField = this._fieldService.getNextField(this.field);
       setTimeout(() => {
         this.focus();
-      });
+      }, 50);
     }
   }
 
@@ -58,7 +60,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public change(): void {
-    this._fieldService.field = this.field;
+    this._fieldService.changeField = this.field;
   }
 
   public focus(): void {
@@ -67,10 +69,20 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  public close(): void {
+    this.closed.emit();
+  }
+
+  public back() {
+    if(this.backField) {
+      this._fieldService.selectField = this.backField;
+    }
+  }
+  
   public submit = () => {
     if(this.nextField) {
-      this._fieldService.field = this.nextField;
+      this._fieldService.selectField = this.nextField;
+      this._fieldService.scrollToField(this.nextField);      
     }
-    
   }
 }

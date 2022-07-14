@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy,
-  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener, HostBinding,
+  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener, HostBinding, ElementRef,
 } from '@angular/core';
 
 import { Subject } from 'rxjs';
@@ -9,7 +9,7 @@ import {
   NgxExtendedPdfViewerService,
 } from 'ngx-extended-pdf-viewer';
 import { Field } from '../../interfaces';
-import { FieldType } from '../../enums';
+import { FieldFormat, FieldType } from '../../enums';
 import { FieldService } from '../../services';
 import { filter, takeUntil, tap } from 'rxjs/operators';
 
@@ -29,13 +29,16 @@ export class FieldComponent implements OnInit, OnDestroy {
 
   public selected = false;
   public FieldType = FieldType;
+  public FieldFormat = FieldFormat;
 
   private _destroy$ = new Subject();
 
   constructor(
     @Inject('field') private _field: Field,
     @Inject('fieldService') private _fieldService: FieldService,
+    @Inject('optionValue') public optionValue: { value: any, label: any },
     private _cdRef: ChangeDetectorRef,
+    private _el: ElementRef,
   ) {}
 
   public ngOnInit(): void {
@@ -50,12 +53,21 @@ export class FieldComponent implements OnInit, OnDestroy {
     )
     .subscribe(() => {
       this.selected = true;
-      this._cdRef.markForCheck();
+      this._cdRef.markForCheck();  
     });
+
+    this._fieldService.fieldChange$
+    .pipe(
+      filter((field: Field) => field === this._field),
+      takeUntil(this._destroy$),
+    )
+    .subscribe(() => {
+      this._cdRef.markForCheck();  
+    });    
   }
   
   public select(): void {
-    this._fieldService.field = this._field;
+    this._fieldService.selectField = this._field;
   }
 
   public get field() {
@@ -68,6 +80,19 @@ export class FieldComponent implements OnInit, OnDestroy {
 
   public markForCheck(): void {
     this._cdRef.markForCheck();
+  }
+
+  public fieldClick(): void {
+    if(this.field.type === FieldType.Checkbox) {
+      const index = this.field.value.indexOf(this.optionValue.value);
+      if(index === -1) {
+        this.field.value.push(this.optionValue.value);
+      } else {
+        this.field.value.splice(index, 1);
+      }
+    } else if(this.field.type === FieldType.RadioButton) {
+      this.field.value = this.optionValue.value;
+    }
   }
 
   public ngOnDestroy(): void {

@@ -34,14 +34,15 @@
     <mat-sidenav-container>
       <mat-sidenav
           [disableClose]="false"
-          [mode]="'side'"
-          [opened]="true"
+          [mode]="sidenav.mode"
+          [opened]="sidenav.opened"
           [position]="'end'"
           [fixedInViewport]="false">
         <div class="sidenav-container">
           <ng-container *ngIf="field">
             <app-field-input 
-              [field]="field">
+              [field]="field"
+              (closed)="sidenav.opened = false">
             </app-field-input>
           </ng-container>
         </div>

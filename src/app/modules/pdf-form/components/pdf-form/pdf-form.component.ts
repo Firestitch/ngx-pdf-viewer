@@ -17,12 +17,13 @@ import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 import { FieldComponent } from '../field';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Field, FieldAnnotation } from '../../interfaces';
 import { takeUntil } from 'rxjs/operators';
 import { FieldInputComponent } from '../field-input';
 import { initField } from '../../helpers';
 import { FieldService } from '../../services';
+import { FieldType } from '../../enums';
 
 
 @Component({
@@ -45,9 +46,13 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public name;
 
   public started = false;
-  public complete = 1;
-  public total = 1;
+  public complete = 0;
+  public total = 0;
   public field: Field;
+  public sidenav = {
+    opened: false,
+    mode: 'side',
+  };
 
   private _destroy$ = new Subject();
 
@@ -70,10 +75,9 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     )
     .subscribe((field: Field) => {
       this.field = field;
-      if(this.fieldInput) {
-        this.fieldInput.focus();
-      }
-
+      this.sidenav.opened = !!field;
+      this.complete = this._fieldService.complete;     
+      this.total = this._fieldService.total;
       this._cdRef.markForCheck();
     });
   }
@@ -85,57 +89,103 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   public pageRendered(event: PageRenderedEvent): void {
     setTimeout(() => {
       const data = this.pdfViewer.getFormData()
-      .subscribe((fields) => {
+      .subscribe((formFields: { pageNumber: number, fieldAnnotation: FieldAnnotation }[]) => {
 
-        const indexes = [ ... this.el.querySelectorAll(`.textWidgetAnnotation`)]
-        .reduce((accum, el, index) => {
-          return {
-            ...accum,
-            [el.getAttribute('data-annotation-id')]: index,
-          };
-        }, {});
+        const fields: Field[] = formFields
+        .filter((formField) => formField.pageNumber === event.pageNumber)
+        .map((formField) => initField(formField.fieldAnnotation))
+        .reduce((accum, field: Field) => {
+          if(field.type === FieldType.RadioButton) {
+            const radioButtonField: Field = accum.find((fieldItem) => field.name === fieldItem.name);
+            if(radioButtonField) {
+              radioButtonField.optionValues = [
+                ...radioButtonField.optionValues,
+                ...field.optionValues
+              ];
 
-        fields.forEach((data: { pageNumber: number, fieldAnnotation: FieldAnnotation }) => {
-          const fieldAnnotation = data.fieldAnnotation;
-          const annotation = this.el.querySelector(`.page[data-page-number="${data.pageNumber}"] .textWidgetAnnotation[data-annotation-id="${fieldAnnotation.id}"]:not(.processed)`);
-
-          if(annotation) {
-            const field = initField(fieldAnnotation, indexes);
-            
-            annotation.classList.add('processed');
-            const injector = Injector.create({
-              parent: this._injector,
-              providers: [
+            } else {
+              accum = [
+                ...accum,
                 {
-                  provide: 'fieldService',
-                  useValue: this._fieldService,
-                },
-                {
-                  provide: 'field',
-                  useValue: field,
-                },
-              ],
-            });
+                  ...field,
+                }
+              ];
+            }
+          } else {
+            accum = [
+              ...accum,
+              field
+            ];
+          }
 
-            const componentPortal = new ComponentPortal(FieldComponent, null, injector);
-            const domPortalOutlet = new DomPortalOutlet(
-              annotation,
-              this._componentFactoryResolver,
-              this._appRef,
-              this._injector,
-            );
+          return accum;
+        },[])
+        .sort((a, b) => a.index - b.index);
 
-            const componentRef = domPortalOutlet.attach(componentPortal);
-            this._fieldService.init(field, componentRef.instance);
+        fields.forEach((field) => {
+          switch(field.type) {
+            case FieldType.Checkbox:
+            case FieldType.RadioButton:
+              field.optionValues
+              .forEach((optionValue) => {
+                const selector = `.page[data-page-number="${event.pageNumber}"] .buttonWidgetAnnotation[data-annotation-id="${optionValue.id}"]:not(.processed)`;
+                this.createComponent(field, selector, optionValue);
+              });
+
+            break;
+
+            default: 
+              const selector = `.page[data-page-number="${event.pageNumber}"] .textWidgetAnnotation[data-annotation-id="${field.id}"]:not(.processed)`;
+              this.createComponent(field, selector, null);
           }
         });
       });
     });
   }
+
+  public createComponent(field: Field, selector, optionValue): void {
+    const annotation = this.el.querySelector(selector);
+          
+    if(annotation) {
+      annotation.classList.add('processed');
+      const injector = Injector.create({
+        parent: this._injector,
+        providers: [
+          {
+            provide: 'fieldService',
+            useValue: this._fieldService,
+          },
+          {
+            provide: 'field',
+            useValue: field,
+          },
+          {
+            provide: 'optionValue',
+            useValue: optionValue,
+          },
+        ],
+      });
+
+      const componentPortal = new ComponentPortal(FieldComponent, null, injector);
+      const domPortalOutlet = new DomPortalOutlet(
+        annotation,
+        this._componentFactoryResolver,
+        this._appRef,
+        this._injector,
+      );
+
+      const componentRef = domPortalOutlet.attach(componentPortal);
+      this._fieldService.init(field, componentRef.instance);
+    }
+  }
   
   public startClick(): void {
     this.started = true;
-    this._fieldService.field = this._fieldService.getFirstField();
+    this.sidenav.opened = true;
+    this._fieldService.selectField = this._fieldService.getFirstField();
+    setTimeout(() => {
+      this.pdfViewer.resize();
+    });
   }
   
   public ngOnDestroy(): void {
