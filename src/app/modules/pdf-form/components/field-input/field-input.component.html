@@ -22,7 +22,7 @@
             matInput
             [(ngModel)]="field.value"
             (ngModelChange)="change()"
-            fsMask
+            [fsMask]="true"
             format="currency"
             name="fieldCurrency">
           <div matPrefix>$&nbsp;</div>
