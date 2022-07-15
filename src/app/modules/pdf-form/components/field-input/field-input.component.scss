@@ -10,8 +10,11 @@
   }
 }
 
-.description {
+.description,
+fs-radio-group, 
+fs-checkbox-group {
   margin-top: 15px;
+  display: block;
 }
 
 mat-form-field {

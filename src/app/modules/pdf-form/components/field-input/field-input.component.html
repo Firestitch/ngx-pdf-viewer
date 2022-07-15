@@ -86,6 +86,7 @@
         <fs-checkbox-group
             [(ngModel)]="field.value"
             name="fieldCheckbox"
+            (ngModelChange)="change()"
             orientation="vertical"
             orientation="vertical">
           <mat-checkbox
@@ -98,7 +99,7 @@
       <ng-container *ngSwitchCase="FieldType.Signature">  
         <fs-signature
           name="fieldSignature"
-          [heightRatio]=".3"
+          [heightRatio]=".4"
           [(ngModel)]="field.value"
           (ngModelChange)="change()">
         </fs-signature>

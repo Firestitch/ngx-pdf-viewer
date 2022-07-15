@@ -51,6 +51,10 @@ export function initField(fieldAnnotation): any {
         case 'groupLabel':
           field.label = value;
           break;
+      
+        case 'groupDescription':
+          field.description = value;
+          break;
 
         case 'label':
           if(field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
