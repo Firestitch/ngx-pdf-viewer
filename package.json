@@ -64,7 +64,7 @@
     "@firestitch/prompt": "^12.0.1",
     "@firestitch/autocomplete": "^12.0.3",
     "@firestitch/menu": "^12.0.1",
-    "@firestitch/mask": "^12.2.0",
+    "@firestitch/mask": "^12.2.1",
     "@firestitch/message": "^12.1.0",
     "@firestitch/style": "^12.0.0",
     "@firestitch/clear": "^12.0.0",
