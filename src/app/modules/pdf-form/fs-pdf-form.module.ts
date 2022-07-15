@@ -19,7 +19,7 @@ import { FsSignatureModule } from '@firestitch/signature';
 import { FsPdfFormComponent } from './components/pdf-form/pdf-form.component';
 import { FsPdfViewerModule } from '../pdf-viewer/fs-pdf-viewer.module';
 import { FieldComponent } from './components/field';
-import { FieldInputComponent, HeaderComponent } from './components';
+import { FieldInputComponent, FieldRenderComponent, HeaderComponent } from './components';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -60,6 +60,7 @@ import { FsMenuModule } from '@firestitch/menu';
     FieldInputComponent,
     FsPdfFormComponent,
     HeaderComponent,
+    FieldRenderComponent,
   ]
 })
 export class FsPdfFormModule {}

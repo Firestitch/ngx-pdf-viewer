@@ -41,8 +41,7 @@ export class FieldService implements OnDestroy {
   }
 
   public set selectField(field: Field) {
-    this._field$.next(field);    
-    this.scrollToField(field);
+    this._field$.next(field); 
   }
 
   public set changeField(changeField: Field) {
@@ -142,6 +141,12 @@ export class FieldService implements OnDestroy {
     const el: any = this.containerEl.querySelector(`section[data-annotation-id="${field.id}"]`);
     if(el) {
       this.containerEl.scroll({top: this.getOffsetTop(el), behavior: 'smooth'});
+    }
+  }
+
+  public scrollToSelectedField(): void {
+    if(this.field) {
+      this.scrollToField(this.field);
     }
   }
 

@@ -138,7 +138,10 @@ export function initField(fieldAnnotation): any {
 
   if(!field.label && field.name) {
     field.label = field.name.split(/(?=[A-Z])/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word, index) => {
+      const letter = index ? word.charAt(0).toLowerCase() : word.charAt(0).toUpperCase();
+      return letter + word.slice(1);
+    })
     .join(' ');
   }
 

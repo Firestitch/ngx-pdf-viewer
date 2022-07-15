@@ -9,8 +9,8 @@
   </div>
   <div 
       class="description"
-      *ngIf="field.description">
-    {{field.description}}
+      *ngIf="field.description"
+      [innerHTML]="field.description">
   </div>
   
   <ng-container *ngIf="!field.readonly; else readonly">
@@ -108,7 +108,9 @@
   </ng-container>
 
   <ng-template #readonly>
-    {{field.value}}
+    <app-field-render
+      [field]="field">
+    </app-field-render>
   </ng-template>
 
   <div class="buttons">

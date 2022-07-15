@@ -66,7 +66,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
   
   public continue(): void {
-   this._fieldService.continue();
+    this._fieldService.continue();
+    this._fieldService.scrollToSelectedField();
   }
   
   public updateProgress(): void {

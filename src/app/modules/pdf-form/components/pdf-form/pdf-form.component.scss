@@ -17,10 +17,6 @@ mat-sidenav {
   .sidenav-container {
     padding: 20px;
   }
-
-  .sidenav-container {
-
-  }
 }
 
 .button-menu {
@@ -31,8 +27,14 @@ mat-sidenav {
   left: 40px;
   z-index: 999;
 
-  button + button {
-    margin-top: 8px;
+  button {
+    + button {
+      margin-top: 8px;
+    }
+
+    mat-icon {
+      transform: scale(1.15);
+    }
   }
 }
 

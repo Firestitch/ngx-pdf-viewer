@@ -9,39 +9,8 @@
       'has-value': field.hasValue,
       required: field.required
     }">
-  <ng-container [ngSwitch]="field.type">
-    <ng-container *ngSwitchCase="FieldType.Birthdate">
-      <ng-container *ngTemplateOutlet="date"></ng-container>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.Date">
-      <ng-container *ngTemplateOutlet="date"></ng-container>
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.RadioButton">
-      <img src="assets/check.svg" *ngIf="field.value === optionValue.value">
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.Checkbox">
-      <img src="assets/check.svg" *ngIf="field.value.indexOf(optionValue.value) !== -1">
-    </ng-container>
-
-    <ng-container *ngSwitchCase="FieldType.Signature">  
-      <img [src]="signatureSvg" *ngIf="field.value">
-    </ng-container>
-
-    <ng-container *ngSwitchDefault>
-      <ng-container *ngIf="field.type === FieldType.Currency || field.format === FieldFormat.Currency; else default">
-        {{field.value | fsFormatCurrency }}
-      </ng-container>
-    </ng-container>
-  </ng-container>  
+  <app-field-render
+    [field]="field"
+    [optionValue]="optionValue">
+  </app-field-render>
 </div>
-
-<ng-template #date>
-  {{field.value | fsDateFormat: field.format || 'full-date' }}
-</ng-template>
-
-<ng-template #default>
-  {{field.value}}
-</ng-template>

@@ -95,14 +95,6 @@ export class FieldComponent implements OnInit, OnDestroy {
     }
   }
 
-  public get signatureSvg() {
-    if(String(this.field.value).match(/^</)) {
-      return this._sanitizer.bypassSecurityTrustUrl(`data:image/svg+xml;base64,${btoa(this.field.value)}`);
-    }
-
-    return this.field.value;
-  }
-
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();

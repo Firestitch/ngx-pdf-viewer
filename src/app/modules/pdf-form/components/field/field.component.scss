@@ -1,14 +1,3 @@
-// @import url(https://fonts.googleapis.com/css?family=Allura);
-
-// ::ng-deep {
-//   ngx-extended-pdf-viewer .grab-to-pan-grab .textWidgetAnnotation .sign-input:not(.disabled) {
-//     cursor: initial;
-//     &.type-signature {
-//       cursor: pointer !important;
-//     }
-//   }
-// }
-
 .field {
   display: flex;
   width: 100%;
@@ -42,9 +31,11 @@
   }
 
   &.field-signature {
-    img {
-      height: 100%;
-      margin: auto;
+    ::ng-deep {
+      img {
+        height: 100%;
+        margin: auto;
+      }
     }
   }
 }

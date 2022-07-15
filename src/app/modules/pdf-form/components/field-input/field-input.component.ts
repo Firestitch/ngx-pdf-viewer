@@ -81,6 +81,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   
   public submit = () => {
     this._fieldService.continue();
+    this._fieldService.scrollToSelectedField();
 
     return of(true);
   }
