@@ -29,5 +29,27 @@
 
   button {
     margin-left: 5px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  .header {
+    .header-content {
+      .name {
+        font-size: 100%;
+      }
+
+      ::ng-deep .start .mat-button-wrapper {
+        text-indent: -1000em;
+        display: inline-flex;
+
+        &::before {
+          content: 'Start';
+          display: inline-flex;
+          text-indent: 0;
+        }
+      }
+    }
   }
 }
