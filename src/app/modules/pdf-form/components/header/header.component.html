@@ -1,68 +1,83 @@
 <div class="header">
   <div class="header-content">
-    <div class="name">
+    <div class="heading">
       {{name}}
+      <ng-container *ngTemplateOutlet="progress"></ng-container>
     </div>
-    <ng-container *ngIf="!hasStarted">
-      <button
-          type="button"
-          mat-raised-button
-          (click)="closed.emit()">
-        Close
-      </button>    
-      <button
-          type="button"
-          color="primary"
-          class="start"
-          mat-raised-button
-          (click)="start()">
-        {{mobile ? 'Start' : 'Get Started'}}
-      </button>
-    </ng-container>
-    <ng-container *ngIf="hasStarted">
-      <div class="progress">
-        {{complete}} of {{total}} Required
-        <div class="percent">{{completePercent}}% Complete</div> 
-      </div>
-      <ng-container *ngIf="!mobile">
-        <ng-container 
-            *ngFor="let action of actions">
-          <button
+    <div class="actions">
+      <ng-container *ngIf="!hasStarted">
+        <button
+            *ngIf="closed.observers.length"
+            class="close"
             type="button"
-            [color]="action.color"
             mat-raised-button
-            (click)="action.click()">
-          {{action.label}}
+            (click)="closed.emit()">
+          Close
+        </button>    
+        <button
+            type="button"
+            color="primary"
+            class="start"
+            mat-raised-button
+            (click)="start()">
+          {{mobile ? 'Start' : 'Get Started'}}
         </button>
+      </ng-container>
+      <ng-container *ngIf="hasStarted">
+       <ng-container *ngTemplateOutlet="progress"></ng-container>
+        <ng-container *ngIf="!mobile">
+          <ng-container 
+              *ngFor="let action of actions">
+            <button
+              type="button"
+              [color]="action.color"
+              mat-raised-button
+              (click)="action.click()">
+            {{action.label}}
+          </button>
+          </ng-container>
+        </ng-container>
+        <button
+            *ngIf="complete < total"
+            type="button"
+            color="primary"
+            mat-raised-button
+            (click)="continue()">
+          Continue
+        </button>
+        <button
+            *ngIf="complete >= total"
+            type="button"
+            color="primary"
+            mat-raised-button
+            (click)="finish()">
+          Finish
+        </button>      
+
+        <ng-container *ngIf="mobile">
+          <fs-menu>
+            <ng-template 
+                *ngFor="let action of actions"
+                fs-menu-item
+                (click)="action.click()">
+              {{action.label}}
+            </ng-template>
+            <ng-template 
+                *ngIf="closed.observers.length"
+                fs-menu-item
+                (click)="closed.emit()">
+              Close
+            </ng-template>
+          </fs-menu>
         </ng-container>
       </ng-container>
-      <button
-          *ngIf="complete < total"
-          type="button"
-          color="primary"
-          mat-raised-button
-          (click)="continue()">
-        Continue
-      </button>
-      <button
-          *ngIf="complete >= total"
-          type="button"
-          color="primary"
-          mat-raised-button
-          (click)="finish()">
-        Finish
-      </button>      
-
-      <ng-container *ngIf="mobile">
-        <fs-menu>
-          <ng-template 
-            *ngFor="let action of actions"
-            fs-menu-item
-            (click)="action.click()">
-            {{action.label}}
-          </ng-template>
-        </fs-menu>
-      </ng-container>
-    </ng-container>
+    </div>
   </div>
 </div>
+
+<ng-template #progress>
+  <div class="progress">
+    {{complete}} of {{total}} Required
+    <div class="percent">{{completePercent}}% Complete</div> 
+  </div>
+</ng-template>

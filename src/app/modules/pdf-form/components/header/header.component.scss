@@ -8,7 +8,7 @@
     display: flex;
     align-items: center; 
 
-    .name {
+    .heading {
       font-size: 130%;
       flex-grow: 1;
       white-space: nowrap;
@@ -18,12 +18,25 @@
 
     .progress {
       margin-right: 5px;
-      text-align: right;
       white-space: nowrap;
 
       .percent {
         font-size: 90%;
       }
+    }
+
+    .actions {
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+
+      .progress {
+        text-align: right;
+      }
+    }
+
+    fs-menu {
+      margin-right: -9px;
     }
   }
 
@@ -36,8 +49,38 @@
 @media (max-width: 599px) {
   .header {
     .header-content {
-      .name {
-        font-size: 100%;
+      .heading {
+        font-size: 110%;
+
+        .progress {
+          font-size: 85%;
+        }
+
+        .percent {
+          display: none;
+        }
+      }
+
+      .close {
+        display: none;
+      }
+    }
+
+    .actions .progress {
+      display: none;
+    }
+  }
+}
+
+
+
+@media (min-width: 600px) {
+  .header {
+    .header-content {
+      .heading {
+        .progress {
+          display: none;
+        }
       }
     }
   }

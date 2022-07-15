@@ -2,7 +2,6 @@
   display: flex;
   width: 100%;
   height: 100%;
-  cursor: pointer;
   background-color: #DCE3FF;
 
   &:not(.field-checkbox,.field-radioButton) {
@@ -30,11 +29,31 @@
     justify-content: end;
   }
 
-  &.field-signature {
+  app-field-render {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer !important;
+  }
+  
+  &.field-checkbox, &.field-radioButton {
     ::ng-deep {
       img {
+        width: 100%;
         height: 100%;
+        display: block;
+      }
+    }
+  }
+
+  &.field-signature {
+    ::ng-deep {
+      app-field-render {
         margin: auto;
+        
+        img.signature {
+          height: 100%;
+        }
       }
     }
   }

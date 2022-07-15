@@ -2,17 +2,18 @@ import {
   Component, ChangeDetectionStrategy,
   OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener, HostBinding, ElementRef,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { Subject } from 'rxjs';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 
 import {
   NgxExtendedPdfViewerService,
 } from 'ngx-extended-pdf-viewer';
+
 import { Field } from '../../classes';
 import { FieldFormat, FieldType } from '../../enums';
 import { FieldService } from '../../services';
-import { filter, takeUntil, tap } from 'rxjs/operators';
-import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -93,6 +94,8 @@ export class FieldComponent implements OnInit, OnDestroy {
     } else if(this.field.type === FieldType.RadioButton) {
       this.field.value = this.optionValue.value;
     }
+
+    this._fieldService.changeField = this.field;
   }
 
   public ngOnDestroy(): void {
