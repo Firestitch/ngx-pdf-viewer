@@ -10,7 +10,7 @@ import { MatInput } from '@angular/material/input';
 import { of, Subject } from 'rxjs';
 import { FieldType } from '../../enums';
 
-import { Field } from '../../interfaces';
+import { Field } from '../../classes';
 import { FieldService } from '../../services';
 
 

@@ -4,7 +4,6 @@ import {
   OnInit,
   ElementRef,
   OnDestroy,
-  Inject,
   ChangeDetectionStrategy,
   ComponentFactoryResolver,
   ApplicationRef,
@@ -24,7 +23,8 @@ import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
 import { FieldComponent } from '../field';
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
-import { Field, FieldAnnotation } from '../../interfaces';
+import { FieldAnnotation } from '../../interfaces';
+import { Field } from '../../classes';
 import { FieldInputComponent } from '../field-input';
 import { initField } from '../../helpers';
 import { FieldService } from '../../services';
@@ -52,13 +52,15 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public pdf;
   @Input() public name;
   @Input() public fields: { name: string, value: string }[] = [];
+  @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
 
   @Output() public fieldChange = new EventEmitter<Field>();
+  @Output() public close = new EventEmitter();
+  @Output() public finish = new EventEmitter();
+  @Output() public start = new EventEmitter();
 
   public started = false;
-  public complete = 0;
-  public total = 0;
-  public completePercent = 0;
+  public zoom = 100;
   public field: Field;
   public sidenav: any = {
     opened: false,
@@ -85,9 +87,6 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .subscribe((field: Field) => {
       this.field = field;
       this.sidenav.opened = !!field;
-      this.complete = this._fieldService.complete; 
-      this.completePercent = Math.round((this.complete/this.total) * 100) || 0;
-      this.total = this._fieldService.total;
       this._cdRef.markForCheck();
     });
     
@@ -98,6 +97,19 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .subscribe((field: Field) => {
       this.fieldChange.next(field);
     });
+
+    this.start
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this.started = true;
+        this.sidenav.opened = true;
+        this._fieldService.selectField = this._fieldService.getFirstField();
+        setTimeout(() => {
+          this.pdfViewer.resize();
+        });
+      });
   }
 
   public get el(): any {
@@ -203,14 +215,13 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       this._fieldService.init(field, componentRef.instance);
     }
   }
+
+  public zoomIn(): void {
+    this.zoom += 20;
+  }
   
-  public startClick(): void {
-    this.started = true;
-    this.sidenav.opened = true;
-    this._fieldService.selectField = this._fieldService.getFirstField();
-    setTimeout(() => {
-      this.pdfViewer.resize();
-    });
+  public zoomOut(): void {
+    this.zoom -= 20;
   }
   
   public ngOnDestroy(): void {

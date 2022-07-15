@@ -24,14 +24,17 @@
     box-sizing: border-box;
     border-radius: 1px;
   }
+
+  &.required:not(.has-value):not(.selected) {
+    background-color: #F7ADAA;
+  }
   
-  &.selected,
-  &:focus {
+  &.selected {
     background-color: #fff6a1;
   }
 
   &:hover {
-    background-color: #fdf9d7;
+    opacity: .5;
   }
 
   &.currency {

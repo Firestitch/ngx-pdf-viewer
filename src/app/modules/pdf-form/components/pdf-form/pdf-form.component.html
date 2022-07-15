@@ -1,29 +1,29 @@
 <div class="container" [ngClass]="{ started: started }">
-  <div class="header">
-    <div class="header-content">
-      <div class="name">
-        {{name}}
-      </div>
-      <button
-          *ngIf="!started"
-          type="button"
-          color="primary"
-          mat-raised-button
-          (click)="startClick()">
-        Get Started
-      </button>
-      <ng-container *ngIf="started">
-        <div class="progress">
-          {{complete}} of {{total}}
-          <!-- <mat-progress-bar
-            [value]="(complete/total) * 100">
-          </mat-progress-bar> -->
-          <div class="percent">{{completePercent}}% Complete</div> 
-        </div>
-      </ng-container>
-    </div>
-  </div>
+  <app-header
+    [name]="name"
+    [actions]="actions"
+    (close)="close.emit()"
+    (finish)="finish.emit()"
+    (start)="start.emit()">
+  </app-header>
   <div class="pdf" [ngClass]="{ started: started }">
+    <div 
+        class="button-menu" 
+        *ngIf="started">
+      <button 
+          color="primary"
+          (click)="zoomIn()"
+          mat-mini-fab>
+        <mat-icon>zoom_in</mat-icon>
+      </button>
+      
+      <button 
+          color="primary"
+          (click)="zoomOut()"
+          mat-mini-fab>
+        <mat-icon>zoom_out</mat-icon>
+      </button>
+    </div>    
     <mat-sidenav-container>
       <mat-sidenav
           [disableClose]="false"
@@ -43,6 +43,7 @@
       <mat-sidenav-content #sidenavContainer>
         <fs-pdf-viewer 
           [pdf]="pdf"
+          [zoom]="zoom"
           (pageRendered)="pageRendered($event)">
         </fs-pdf-viewer>
       </mat-sidenav-content>

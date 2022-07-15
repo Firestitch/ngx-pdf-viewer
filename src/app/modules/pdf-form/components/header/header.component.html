@@ -1,0 +1,59 @@
+<div class="header">
+  <div class="header-content">
+    <div class="name">
+      {{name}}
+    </div>
+    <ng-container *ngIf="!started">
+      <button
+          type="button"
+          mat-raised-button
+          (click)="close.emit()">
+        Close
+      </button>    
+      <button
+          type="button"
+          color="primary"
+          mat-raised-button
+          (click)="startClick()">
+        Get Started
+      </button>
+    </ng-container>
+    <ng-container *ngIf="started">
+      <div class="progress">
+        {{complete}} of {{total}} Required
+        <div class="percent">{{completePercent}}% Complete</div> 
+      </div>
+      <ng-container *ngIf="!mobile">
+        <ng-container 
+            *ngFor="let action of actions">
+          <button
+            type="button"
+            [color]="action.color"
+            mat-raised-button
+            (click)="action.click()">
+          {{action.label}}
+        </button>
+        </ng-container>
+      </ng-container>
+      <button
+          *ngIf="complete >= total"
+          type="button"
+          color="primary"
+          mat-raised-button
+          (click)="finishClick()">
+        Finish
+      </button>
+
+      <ng-container *ngIf="mobile">
+        <fs-menu>
+          <ng-template 
+            *ngFor="let action of actions"
+            fs-menu-item
+            (click)="action.click()">
+            {{action.label}}
+          </ng-template>
+        </fs-menu>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

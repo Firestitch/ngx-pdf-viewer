@@ -1,18 +1,19 @@
+import { Field } from "../classes/field";
 import { FieldType } from "../enums";
-import { Field } from "../interfaces";
 
 
-export function initField(fieldAnnotation): Field {
-  const field: Field = {
-    name: fieldAnnotation.fieldName,
-    description: fieldAnnotation.alternativeText,
-    type: FieldType.Input,
-    value: null,
-    readonly: false,
-    id: fieldAnnotation.id,
-    index: -1,
-  };
 
+export function initField(fieldAnnotation): any {
+  const field = new Field;
+  field.name = fieldAnnotation.fieldName;
+  field.description = fieldAnnotation.alternativeText;
+  field.type = FieldType.Input;
+  field.value = null;
+  field.readonly = false;
+  field.id = fieldAnnotation.id;
+  field.index = -1;
+  field.required = false;
+  
   const optionValue = { label: '', value: null, id: field.id };
   let _default = null;
 
@@ -31,6 +32,10 @@ export function initField(fieldAnnotation): Field {
 
         case 'readonly':
           field.readonly = true;
+          break; 
+
+        case 'required':
+          field.required = true;
           break;                 
 
         default:

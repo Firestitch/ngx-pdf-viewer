@@ -19,10 +19,12 @@ import { FsSignatureModule } from '@firestitch/signature';
 import { FsPdfFormComponent } from './components/pdf-form/pdf-form.component';
 import { FsPdfViewerModule } from '../pdf-viewer/fs-pdf-viewer.module';
 import { FieldComponent } from './components/field';
-import { FieldInputComponent } from './components';
+import { FieldInputComponent, HeaderComponent } from './components';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { FsMenuModule } from '@firestitch/menu';
 
 
 @NgModule({
@@ -34,9 +36,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatInputModule,
     MatFormFieldModule,
     MatSidenavModule,
-    MatProgressBarModule,
     MatRadioModule,
     MatCheckboxModule,
+    MatIconModule,
 
     FsFormModule,
     FsCommonModule,  
@@ -45,6 +47,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FsCheckboxGroupModule,
     FsDateModule,
     FsRadioGroupModule,
+    FsMenuModule,
     FsSignatureModule,
 
     FsPdfViewerModule, 
@@ -56,6 +59,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FieldComponent,
     FieldInputComponent,
     FsPdfFormComponent,
+    HeaderComponent,
   ]
 })
 export class FsPdfFormModule {}

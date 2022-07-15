@@ -29,7 +29,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Input() public pdf;
   @Input() public height;
   @Input() public pageViewMode: 'infinite-scroll' | 'multiple' | 'single' = 'infinite-scroll';
-  @Input() public zoom: 'auto' | 'page-actual' | 'page-fit' | 'page-width' | string  = 'auto';
+  @Input() public zoom: 'auto' | 'page-actual' | 'page-fit' | 'page-width' | string | number = 'auto';
 
   @Output() public init = new EventEmitter();
   @Output() public pageRendered = new EventEmitter<PageRenderedEvent>();

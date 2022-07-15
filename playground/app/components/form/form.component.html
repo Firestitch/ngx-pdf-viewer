@@ -1,5 +1,9 @@
 <fs-pdf-form 
   name="2022 Personal Tax Credits Return"
   [fields]="fields"
-  [pdf]="pdf">
+  [actions]="actions"
+  [pdf]="pdf"
+  (finish)="finish()"
+  (close)="close()"
+  (start)="start()">
 </fs-pdf-form>

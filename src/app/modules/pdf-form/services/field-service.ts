@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { FieldComponent } from '../components';
-import { Field } from '../interfaces';
+import { Field } from '../classes';
 
 
 @Injectable()
@@ -51,14 +51,16 @@ export class FieldService implements OnDestroy {
     this._fieldChange$.next(changeField);
   }
 
-  public get complete(): number {
+  public get totalRequiredCompleted(): number {
     return this.getFields()
-    .filter((field) => field.value !== null)
+    .filter((field) => field.required && field.value)
     .length;
   }
 
-  public get total(): number {
-    return this.getFields().length;
+  public get totalRequired(): number {
+    return this.getFields()
+    .filter((field) => field.required)
+    .length;
   }
 
   public getFields(): Field[] {

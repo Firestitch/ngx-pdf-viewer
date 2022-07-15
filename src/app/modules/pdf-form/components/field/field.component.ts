@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import {
   NgxExtendedPdfViewerService,
 } from 'ngx-extended-pdf-viewer';
-import { Field } from '../../interfaces';
+import { Field } from '../../classes';
 import { FieldFormat, FieldType } from '../../enums';
 import { FieldService } from '../../services';
 import { filter, takeUntil, tap } from 'rxjs/operators';
@@ -59,7 +59,6 @@ export class FieldComponent implements OnInit, OnDestroy {
 
     this._fieldService.fieldChange$
     .pipe(
-      filter((field: Field) => field === this._field),
       takeUntil(this._destroy$),
     )
     .subscribe(() => {
@@ -71,7 +70,7 @@ export class FieldComponent implements OnInit, OnDestroy {
     this._fieldService.selectField = this._field;
   }
 
-  public get field() {
+  public get field(): Field {
     return this._field;
   }
 

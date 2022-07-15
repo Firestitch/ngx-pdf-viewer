@@ -1,5 +1,12 @@
 <form fsForm [submit]="submit" [dirtySubmitButton]="false">
-  <div class="heading">{{field.label}}</div>
+  <div class="heading">
+    {{field.label}}
+    <span 
+        *ngIf="field.required"
+        class="required">
+      Required
+    </span>
+  </div>
   <div 
       class="description"
       *ngIf="field.description">
@@ -106,20 +113,21 @@
   <div class="buttons">
     <button
         [disabled]="!backField"
-        mat-raised-button
+        mat-button
         (click)="back()"
         type="button">
       Back
     </button>
     <button
         *ngIf="nextField"
-        mat-raised-button
+        mat-button
         color="primary"
         type="submit">
-      Next
+      Continue
     </button>
     <button
-        mat-raised-button
+        class="close"
+        mat-button
         (click)="close()"
         type="button">
       Close

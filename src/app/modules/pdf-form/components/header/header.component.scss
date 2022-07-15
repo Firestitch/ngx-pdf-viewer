@@ -1,0 +1,33 @@
+.header {
+  padding: 12px;
+  background-color: #494949;
+  box-sizing: border-box;  
+  color: #fff;
+
+  .header-content {
+    display: flex;
+    align-items: center; 
+
+    .name {
+      font-size: 130%;
+      flex-grow: 1;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .progress {
+      margin-right: 5px;
+      text-align: right;
+      white-space: nowrap;
+
+      .percent {
+        font-size: 90%;
+      }
+    }
+  }
+
+  button {
+    margin-left: 5px;
+  }
+}

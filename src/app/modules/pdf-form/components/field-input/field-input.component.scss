@@ -1,6 +1,13 @@
 .heading {
   font-size: 125%;
   font-weight: bold;
+
+  .required {
+    font-weight: normal;
+    font-size: 70%;
+    color: #E91C14;
+    margin-left: 3px;
+  }
 }
 
 .description {
@@ -12,8 +19,15 @@ mat-form-field {
 }
 
 .buttons {
+  display: flex;
+
   button + button {
     margin-left: 5px;
+  }
+
+  button.close {
+    display: flex;
+    margin-left: auto !important;
   }
 }
 

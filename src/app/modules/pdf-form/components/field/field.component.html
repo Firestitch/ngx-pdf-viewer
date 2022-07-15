@@ -5,7 +5,9 @@
     (click)="fieldClick()"
     [ngClass]="{ 
       selected: selected,
-      currency: field.type === FieldType.Currency || field.format === FieldFormat.Currency
+      currency: field.type === FieldType.Currency || field.format === FieldFormat.Currency,
+      'has-value': field.hasValue,
+      required: field.required
     }">
   <ng-container [ngSwitch]="field.type">
     <ng-container *ngSwitchCase="FieldType.Birthdate">
