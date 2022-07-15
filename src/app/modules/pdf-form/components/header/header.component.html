@@ -3,11 +3,11 @@
     <div class="name">
       {{name}}
     </div>
-    <ng-container *ngIf="!started">
+    <ng-container *ngIf="!hasStarted">
       <button
           type="button"
           mat-raised-button
-          (click)="close.emit()">
+          (click)="closed.emit()">
         Close
       </button>    
       <button
@@ -15,11 +15,11 @@
           color="primary"
           class="start"
           mat-raised-button
-          (click)="startClick()">
-        Get Started
+          (click)="start()">
+        {{mobile ? 'Start' : 'Get Started'}}
       </button>
     </ng-container>
-    <ng-container *ngIf="started">
+    <ng-container *ngIf="hasStarted">
       <div class="progress">
         {{complete}} of {{total}} Required
         <div class="percent">{{completePercent}}% Complete</div> 
@@ -37,13 +37,21 @@
         </ng-container>
       </ng-container>
       <button
+          *ngIf="complete < total"
+          type="button"
+          color="primary"
+          mat-raised-button
+          (click)="continue()">
+        Continue
+      </button>
+      <button
           *ngIf="complete >= total"
           type="button"
           color="primary"
           mat-raised-button
-          (click)="finishClick()">
+          (click)="finish()">
         Finish
-      </button>
+      </button>      
 
       <ng-container *ngIf="mobile">
         <fs-menu>

@@ -17,7 +17,7 @@ import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { MatSidenavContent } from '@angular/material/sidenav';
 
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
@@ -54,12 +54,12 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public fields: { name: string, value: string }[] = [];
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
 
-  @Output() public fieldChange = new EventEmitter<Field>();
-  @Output() public close = new EventEmitter();
-  @Output() public finish = new EventEmitter();
-  @Output() public start = new EventEmitter();
+  @Output() public fieldChanged = new EventEmitter<Field>();
+  @Output() public closed = new EventEmitter();
+  @Output() public finished = new EventEmitter();
+  @Output() public started = new EventEmitter();
 
-  public started = false;
+  public hasStarted = false;
   public zoom = 100;
   public field: Field;
   public sidenav: any = {
@@ -90,20 +90,28 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       this._cdRef.markForCheck();
     });
     
-    this._fieldService.fieldChange$
+    this._fieldService.fieldChanged$
     .pipe(
       takeUntil(this._destroy$),
     )
     .subscribe((field: Field) => {
-      this.fieldChange.next(field);
+      this.fieldChanged.next(field);
     });
 
-    this.start
+    this._fieldService.finished$
       .pipe(
         takeUntil(this._destroy$),
       )
       .subscribe(() => {
-        this.started = true;
+        this.finished.emit();
+      });
+      
+    this.started
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this.hasStarted = true;
         this.sidenav.opened = true;
         this._fieldService.selectField = this._fieldService.getFirstField();
         setTimeout(() => {

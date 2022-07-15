@@ -9,11 +9,10 @@ import {
   EventEmitter,
 } from '@angular/core';
 
-import { skip, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { FieldService } from '../../services';
-import { FsPrompt } from '@firestitch/prompt';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 
 
@@ -28,11 +27,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Input() public name;
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
   
-  @Output() public start = new EventEmitter();
-  @Output() public finish = new EventEmitter();
-  @Output() public close = new EventEmitter();
+  @Output() public started = new EventEmitter();
+  @Output() public closed = new EventEmitter();
   
-  public started;
+  public hasStarted;
   public complete = 0;
   public zoom = 100;
   public total = 0;
@@ -44,7 +42,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private _cdRef: ChangeDetectorRef,
     private _fieldService: FieldService,
-    private _prompt: FsPrompt,
     private _breakpointObserver: BreakpointObserver,
   ) {}
 
@@ -58,7 +55,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this._cdRef.markForCheck();
     });    
 
-    this._fieldService.fieldChange$
+    this._fieldService.fieldChanged$
     .pipe(
       takeUntil(this._destroy$),
     )
@@ -68,37 +65,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
   
+  public continue(): void {
+   this._fieldService.continue();
+  }
+  
   public updateProgress(): void {
     this.total = this._fieldService.totalRequired;
     this.complete = this._fieldService.totalRequiredCompleted; 
     this.completePercent = Math.round((this.complete/this.total) * 100) || 0;
   }
   
-  public startClick(): void {
-    this.started = true;
+  public start(): void {
+    this.hasStarted = true;
     this.updateProgress();
-    this.start.emit();
+    this.started.emit();
   }
   
-  public finishClick(): void {
-    this._prompt.confirm({
-      title: 'Confirm Submit',
-      template: 'You are about to submit your form. Are you sure you want to submit?',
-      buttons: [
-        {
-          label: 'Submit',
-          color: 'primary',
-          value: true,
-        },
-        {
-          label: 'Cancel',
-          cancel: true,
-        },
-      ],
-    }).subscribe(() => {
-      this.finish.emit();
-      this._cdRef.markForCheck();
-    });
+  public finish(): void {
+    this._fieldService.finish();
   }
   
   public ngOnDestroy(): void {

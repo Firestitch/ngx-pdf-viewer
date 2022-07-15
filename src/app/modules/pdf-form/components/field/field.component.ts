@@ -57,7 +57,7 @@ export class FieldComponent implements OnInit, OnDestroy {
       this._cdRef.markForCheck();  
     });
 
-    this._fieldService.fieldChange$
+    this._fieldService.fieldChanged$
     .pipe(
       takeUntil(this._destroy$),
     )

@@ -1,15 +1,15 @@
-<div class="container" [ngClass]="{ started: started }">
+<div class="container" [ngClass]="{ started: hasStarted }">
   <app-header
     [name]="name"
     [actions]="actions"
-    (close)="close.emit()"
-    (finish)="finish.emit()"
-    (start)="start.emit()">
+    (closed)="closed.emit()"
+    (finished)="finished.emit()"
+    (started)="started.emit()">
   </app-header>
-  <div class="pdf" [ngClass]="{ started: started }">
+  <div class="pdf">
     <div 
         class="button-menu" 
-        *ngIf="started">
+        *ngIf="hasStarted">
       <button 
           color="primary"
           (click)="zoomIn()"

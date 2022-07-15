@@ -39,17 +39,6 @@
       .name {
         font-size: 100%;
       }
-
-      ::ng-deep .start .mat-button-wrapper {
-        text-indent: -1000em;
-        display: inline-flex;
-
-        &::before {
-          content: 'Start';
-          display: inline-flex;
-          text-indent: 0;
-        }
-      }
     }
   }
 }

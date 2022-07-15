@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { FieldComponent } from '../components';
 import { Field } from '../classes';
+import { FsPrompt } from '@firestitch/prompt';
 
 
 @Injectable()
@@ -11,23 +12,37 @@ export class FieldService implements OnDestroy {
   public containerEl;
 
   private _field$ = new BehaviorSubject<Field>(null);
-  private _fieldChange$ = new Subject<Field>();
+  private _fieldChanged$ = new Subject<Field>();
+  private _finished$ = new Subject<any>();
   private _destroy$ = new Subject();
+
+  public constructor(
+    private _prompt: FsPrompt,
+  ) {}
 
   public init(field: Field, fieldComponent: FieldComponent) {
     this.fieldComponents.set(field, fieldComponent);    
   }
 
-  public get field$() {
+  public get field$(): BehaviorSubject<Field> {
     return this._field$;
   }
 
-  public get fieldChange$() {
-    return this._fieldChange$;
+  public get fieldChanged$(): Subject<Field> {
+    return this._fieldChanged$;
+  }
+
+  public get finished$(): Subject<any> {
+    return this._finished$;
+  }
+
+  public get field() {
+    return this._field$.getValue();
   }
 
   public set selectField(field: Field) {
-    this._field$.next(field);
+    this._field$.next(field);    
+    this.scrollToField(field);
   }
 
   public set changeField(changeField: Field) {
@@ -48,7 +63,7 @@ export class FieldService implements OnDestroy {
       }
     });
 
-    this._fieldChange$.next(changeField);
+    this._fieldChanged$.next(changeField);
   }
 
   public get totalRequiredCompleted(): number {
@@ -65,6 +80,42 @@ export class FieldService implements OnDestroy {
 
   public getFields(): Field[] {
     return Array.from(this.fieldComponents.keys());
+  }
+
+  public continue(): void {
+    const nextField = this.getNextField(this.field);
+    if(nextField) {
+      this.selectField = nextField;
+    } else {
+      const field = this.getFields()
+      .find((field) => !!field.required && !field.hasValue);
+
+      if(field) {
+        this.selectField = field;
+      } else {
+        this.finish();
+      }      
+    }
+  }
+
+  public finish(): void {
+    this._prompt.confirm({
+      title: 'Confirm Submit',
+      template: 'You are about to submit your form. Are you sure you want to submit?',
+      buttons: [
+        {
+          label: 'Submit',
+          color: 'primary',
+          value: true,
+        },
+        {
+          label: 'Cancel',
+          cancel: true,
+        },
+      ],
+    }).subscribe(() => {
+      this._finished$.next();
+    });
   }
 
   public getFieldIndex(field: Field): number {
