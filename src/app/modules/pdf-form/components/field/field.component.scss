@@ -32,7 +32,8 @@
   app-field-render {
     width: 100%;
     height: 100%;
-    display: block;
+    display: flex;
+    align-items: center;
     cursor: pointer !important;
   }
   
@@ -49,7 +50,7 @@
   &.field-signature {
     ::ng-deep {
       app-field-render {
-        margin: auto;
+        justify-content: center;
         
         img.signature {
           height: 100%;
