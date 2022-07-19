@@ -1,6 +1,7 @@
 import { FieldType } from '../enums';
 
 export class Field {
+  public guid?: string;
   public name?: string;
   public label?: string;
   public description: string;

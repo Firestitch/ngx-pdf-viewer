@@ -12,19 +12,20 @@ export interface FieldAnnotation {
   defaultAppearanceData: any,
   defaultFieldValue: any,
   fieldFlags: number,
-  fieldName: string
-  fieldType: 'Tx'
-  fieldValue: string
-  hasAppearance: boolean
-  hasOwnCanvas: boolean
-  hidden: boolean
-  id: string
-  maxLen: number
-  modificationDate: any
+  fieldName: string,
+  fieldType: 'Tx' | 'Btn',
+  fieldValue: string,
+  hasAppearance: boolean,
+  hasOwnCanvas: boolean,
+  hidden: boolean,
+  id: string,
+  maxLen: number,
+  modificationDate: any,
   multiLine: boolean,
-  readOnly: boolean
+  readOnly: boolean,
   rect: any,
-  subtype: 'Widget'
-  textAlignment: any
-  value: any
+  subtype: 'Widget',
+  textAlignment: any,
+  value: any,
+  radioButton?: boolean,
 }

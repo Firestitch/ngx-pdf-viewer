@@ -17,13 +17,13 @@ import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { MatSidenavContent } from '@angular/material/sidenav';
 
 import { takeUntil } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
 import { FieldComponent } from '../field';
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
-import { FieldAnnotation } from '../../interfaces';
+import { FieldAnnotation, PdfField } from '../../interfaces';
 import { Field } from '../../classes';
 import { FieldInputComponent } from '../field-input';
 import { initField } from '../../helpers';
@@ -51,7 +51,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
   @Input() public pdf;
   @Input() public name;
-  @Input() public fields: { name: string, value: string }[] = [];
+  @Input() public fields: PdfField[] = [];
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
 
   @Output() public fieldChanged = new EventEmitter<Field>();
@@ -130,7 +130,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       .subscribe((formFields: { pageNumber: number, fieldAnnotation: FieldAnnotation }[]) => {
         const fields: Field[] = formFields
         .filter((formField) => formField.pageNumber === event.pageNumber)
-        .map((formField) => initField(formField.fieldAnnotation))
+        .map((formField) => initField(formField.fieldAnnotation, this.fields))
         .reduce((accum, field: Field) => {
           if(field.type === FieldType.RadioButton) {
             const radioButtonField: Field = accum.find((fieldItem) => field.name === fieldItem.name);

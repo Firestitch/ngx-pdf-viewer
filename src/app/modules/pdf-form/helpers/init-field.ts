@@ -1,107 +1,48 @@
-import { Field } from "../classes/field";
-import { FieldType } from "../enums";
+import { Field } from '../classes/field';
+import { FieldType } from '../enums';
+import { FieldAnnotation, PdfField } from '../interfaces';
 
 
-
-export function initField(fieldAnnotation): any {
+export function initField(fieldAnnotation: FieldAnnotation, pdfFields: PdfField[]): any {
   const field = new Field;
-  field.name = fieldAnnotation.fieldName;
-  field.description = fieldAnnotation.alternativeText;
-  field.type = FieldType.Input;
-  field.value = null;
-  field.readonly = false;
+  field.guid = fieldAnnotation.fieldName;
   field.id = fieldAnnotation.id;
   field.index = -1;
-  field.required = false;
-  
-  const optionValue = { label: '', value: null, id: field.id };
   let _default = null;
+
+  const optionValue = { label: '', value: null, id: field.id };
+  const pdfField = pdfFields.find((pdfField) => pdfField.guid === field.guid);
+
+  if(pdfField) {
+    field.description = pdfField.description;
+    field.type = pdfField.type;
+    field.readonly = pdfField.readonly;
+    field.required = pdfField.required;
+    field.index = pdfField.index;
+    field.name = pdfField.name;
+    field.maxLength = pdfField.maxLength;
+    field.formula = pdfField.formula;
+    field.numeric = pdfField.numeric;
+    field.format = pdfField.format;
+    _default = pdfField.default;
+  }
 
   if(fieldAnnotation.fieldType === 'Btn') {
     field.type = fieldAnnotation.radioButton ? FieldType.RadioButton : FieldType.Checkbox;
-  }
-
-  fieldAnnotation.fieldName.split('|')
-  .forEach((part) => {
-    const index = part.indexOf(':');             
-    if(index === -1) {
-      switch(part) {
-        case 'numeric':
-          field.numeric = true;
-          break; 
-
-        case 'readonly':
-          field.readonly = true;
-          break; 
-
-        case 'required':
-          field.required = true;
-          break;                 
-
-        default:
-          field.name = part;
-      }
-    } else {
-      const value: any = part.substring(index + 1);
-      switch(part.substring(0,index)) {
-        case 'name':
-          field.name = value;
-          break;
-        
-        case 'groupLabel':
-          field.label = value;
-          break;
-      
-        case 'groupDescription':
-          field.description = value;
-          break;
-
-        case 'label':
-          if(field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
-            optionValue.label = value;
-          } else {
-            field.label = value;
-          }
-          
-          break;
-      
-        case 'type':
-          field.type = value;
-          break;
-      
-        case 'maxLength':
-          field.maxLength = value;
-          break;
     
-        case 'minLength':
-          field.minLength = value;
-          break;
-    
-        case 'formula':
-          field.formula = value;
-          break;
-  
-        case 'format':
-          field.format = value;
-          break;
-  
-        case 'index':
-          field.index = Number(value);
-          break;
-  
-        case 'default':
-          _default = value;
-          break;
-  
-        case 'value':
-          if(field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
-            optionValue.value = value;
-          }
-
-          break;
-      }
+    if(pdfField) {
+      field.label = pdfField.groupLabel;
+      field.description = pdfField.groupDescription;
+      optionValue.label = pdfField.label;
+      optionValue.value = pdfField.value;
     }
-  });
+  } else {
+    if(pdfField) {
+      field.label = pdfField.label;
+      field.description = pdfField.description;
+      field.value = pdfField.value;
+    }
+  }
 
   if(field.type === FieldType.Checkbox) {
     if(!Array.isArray(field.value)) {

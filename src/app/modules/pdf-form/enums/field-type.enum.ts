@@ -1,6 +1,6 @@
 export enum FieldType {
-  Input = 'input',
-  Textarea = 'textarea',
+  ShortText = 'shorttext',
+  LongText = 'longtext',
   Date = 'date',
   Birthdate = 'birthdate',
   Currency = 'currency',
