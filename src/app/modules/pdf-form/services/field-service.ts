@@ -1,14 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { FieldComponent } from '../components';
-import { Field } from '../classes';
+
 import { FsPrompt } from '@firestitch/prompt';
+
+
+import { BehaviorSubject, Subject } from 'rxjs';
+
+import { Field } from '../classes';
 
 
 @Injectable()
 export class FieldService implements OnDestroy {
 
-  public fieldComponents = new Map<Field,FieldComponent>();
+  public fieldComponents = new Set<Field>();
   public containerEl;
 
   private _field$ = new BehaviorSubject<Field>(null);
@@ -20,8 +23,12 @@ export class FieldService implements OnDestroy {
     private _prompt: FsPrompt,
   ) {}
 
-  public init(field: Field, fieldComponent: FieldComponent) {
-    this.fieldComponents.set(field, fieldComponent);    
+  public addField(field: Field) {
+    this.fieldComponents.add(field);    
+  }
+
+  public removeField(field: Field) {
+    this.fieldComponents.delete(field);    
   }
 
   public get field$(): BehaviorSubject<Field> {
@@ -133,7 +140,7 @@ export class FieldService implements OnDestroy {
   }
 
   public getFirstField(): Field {
-    const fields = Array.from(this.fieldComponents.keys());
+    const fields = this.getFields();
     return fields[0];
   }
   

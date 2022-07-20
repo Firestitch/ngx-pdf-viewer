@@ -9,4 +9,5 @@ export { FsPdfFormComponent } from './app/modules/pdf-form/components/pdf-form/p
 export { Field } from './app/modules/pdf-form/classes/field';
 
 export { FieldType } from './app/modules/pdf-form/enums/field-type.enum';
+export { PdfField } from './app/modules/pdf-form/interfaces/pdf-field';
 

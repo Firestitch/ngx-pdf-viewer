@@ -15,7 +15,7 @@ import { FieldService } from '../../services';
 
 
 @Component({
-  selector: 'app-field-input',
+  selector: 'fs-field-input',
   templateUrl: './field-input.component.html',
   styleUrls: ['./field-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

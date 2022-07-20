@@ -6,13 +6,13 @@ import {
   Output,
   OnDestroy,
   ChangeDetectionStrategy,
-  AfterContentInit,
   ElementRef,
   ViewChild,
 } from '@angular/core';
 
 import { NgxExtendedPdfViewerComponent, NgxExtendedPdfViewerService, PageRenderedEvent } from 'ngx-extended-pdf-viewer';
-import { from, Observable } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
+import { PdfField } from '../../../pdf-form/interfaces';
 
 
 @Component({
@@ -27,6 +27,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   public extendedPdfViewer: NgxExtendedPdfViewerComponent;
 
   @Input() public pdf;
+  @Input() public fields: PdfField[] = [];
   @Input() public height;
   @Input() public pageViewMode: 'infinite-scroll' | 'multiple' | 'single' = 'infinite-scroll';
   @Input() public zoom: 'auto' | 'page-actual' | 'page-fit' | 'page-width' | string | number = 'auto';
@@ -35,6 +36,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Output() public pageRendered = new EventEmitter<PageRenderedEvent>();
 
   public src;
+
+  private _destroy$ = new Subject();
 
   constructor(
     private _ngxService: NgxExtendedPdfViewerService,
@@ -46,9 +49,9 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
       this.height = '100px';
     }
 
-    setTimeout(() => {
+    //setTimeout(() => {
       this.src = this.pdf;
-    });
+   // });
   }
 
   public pdfLoaded(): void {    
@@ -61,11 +64,16 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
     return from(this._ngxService.getFormData(true));
   }
 
-  public ngOnDestroy() {
+  public pageRenderedd(event) {
+    debugger;
   }
 
   public resize(): void {
     this._ngxService.recalculateSize();
   }
 
+  public ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
 }

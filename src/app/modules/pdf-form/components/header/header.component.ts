@@ -17,7 +17,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 
 
 @Component({
-  selector: 'app-header',
+  selector: 'fs-header',
   templateUrl: 'header.component.html',
   styleUrls: [ 'header.component.scss' ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,9 +26,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Input() public name;
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
-  
-  @Output() public started = new EventEmitter();
-  @Output() public closed = new EventEmitter();
+  @Input() public closed: EventEmitter<any>;
+  @Input() public started: EventEmitter<any>;
   
   public hasStarted;
   public complete = 0;

@@ -1,11 +1,12 @@
 import { FieldType } from '../enums';
+import { PdfField } from '../interfaces';
 
-export class Field {
+export class Field implements PdfField {
+  public type: FieldType;
   public guid?: string;
   public name?: string;
   public label?: string;
-  public description: string;
-  public type?: any;
+  public description?: string;
   public value?: any;
   public id?: string;
   public numeric?: boolean;
@@ -17,6 +18,11 @@ export class Field {
   public format?: 'currency' | string;
   public formula?: string;
   public optionValues?: { label: string, value: any, id: string }[];
+  public top?: number;
+  public left?: number;
+  public width?: number;
+  public height?: number;
+  public pageNumber?: number;
 
   public get hasValue() {
     return this.value !== null && !!String(this.value).length;

@@ -29,7 +29,7 @@
     justify-content: end;
   }
 
-  app-field-render {
+  fs-field-render {
     width: 100%;
     height: 100%;
     display: flex;
@@ -49,7 +49,7 @@
 
   &.field-signature {
     ::ng-deep {
-      app-field-render {
+      fs-field-render {
         justify-content: center;
         
         img.signature {

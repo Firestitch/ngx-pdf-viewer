@@ -12,11 +12,11 @@ import { takeUntil } from 'rxjs/operators';
 
 import { Field } from '../../classes';
 import { FieldFormat, FieldType } from '../../enums';
-import { FieldService } from '../../services';
+import { FieldService } from '../../services/field-service';
 
 
 @Component({
-  selector: 'app-field-render',
+  selector: 'fs-field-render',
   templateUrl: './field-render.component.html',
   styleUrls: ['./field-render.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

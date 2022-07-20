@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy,
-  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener, HostBinding, ElementRef,
+  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener, 
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -13,7 +13,7 @@ import {
 
 import { Field } from '../../classes';
 import { FieldFormat, FieldType } from '../../enums';
-import { FieldService } from '../../services';
+import { FieldService } from '../../services/field-service';
 
 
 @Component({
@@ -44,6 +44,7 @@ export class FieldComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
+    this._fieldService.addField(this._field);
     this._fieldService.field$
     .pipe(
       tap(() => {
@@ -99,6 +100,7 @@ export class FieldComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
+    this._fieldService.removeField(this._field);
     this._destroy$.next();
     this._destroy$.complete();
   }

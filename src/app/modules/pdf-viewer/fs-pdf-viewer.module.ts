@@ -10,7 +10,7 @@ import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.compone
     CommonModule,
     FormsModule,
     
-    NgxExtendedPdfViewerModule,    
+    NgxExtendedPdfViewerModule,   
   ],
   exports: [
     FsPdfViewerComponent,

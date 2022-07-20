@@ -1,11 +1,10 @@
 <div class="container" [ngClass]="{ started: hasStarted }">
-  <app-header
+  <fs-header
     [name]="name"
     [actions]="actions"
-    (closed)="closed.emit()"
-    (finished)="finished.emit()"
-    (started)="started.emit()">
-  </app-header>
+    [closed]="closed"
+    [started]="started">
+  </fs-header>
   <div class="pdf">
     <div 
         class="button-menu" 
@@ -33,10 +32,10 @@
           [fixedInViewport]="false">
         <div class="sidenav-container">
           <ng-container *ngIf="field">
-            <app-field-input 
+            <fs-field-input 
               [field]="field"
               (closed)="sidenav.opened = false">
-            </app-field-input>
+            </fs-field-input>
           </ng-container>
         </div>
       </mat-sidenav>

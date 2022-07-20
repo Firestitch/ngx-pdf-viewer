@@ -21,12 +21,11 @@ import { Subject } from 'rxjs';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
-import { FieldComponent } from '../field';
+import { FieldComponent } from '../field/field.component';
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
-import { FieldAnnotation, PdfField } from '../../interfaces';
+import { PdfField } from '../../interfaces';
 import { Field } from '../../classes';
-import { FieldInputComponent } from '../field-input';
-import { initField } from '../../helpers';
+import { FieldInputComponent } from '../field-input/field-input.component';
 import { FieldService } from '../../services';
 import { FieldType } from '../../enums';
 
@@ -125,6 +124,57 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   }
 
   public pageRendered(event: PageRenderedEvent): void {
+    const scale = event.source.viewport.scale;
+    const page = event.source.div;
+
+    const fieldContainerEl = document.createElement('div');
+    fieldContainerEl.classList.add('field-container');
+
+    page.append(fieldContainerEl);
+
+    this.fields
+    .filter((field) => field.pageNumber === event.pageNumber)
+    .reduce((accum, field: Field) => {
+      if(field.type === FieldType.RadioButton) {
+        const radioButtonField: Field = accum.find((fieldItem) => field.name === fieldItem.name);
+        if(radioButtonField) {
+          radioButtonField.optionValues = [
+            ...radioButtonField.optionValues,
+            ...field.optionValues
+          ];
+
+        } else {
+          accum = [
+            ...accum,
+            {
+              ...field,
+            }
+          ];
+        }
+      } else {
+        accum = [
+          ...accum,
+          field
+        ];
+      }
+
+      return accum;
+    },[])    
+    .forEach((field: any) => {
+      const fieldEl = document.createElement('div');
+      fieldEl.classList.add('field-container-field');
+
+      fieldEl.style.top = `${(field.top * 72 * scale)}px`;
+      fieldEl.style.left = `${(field.left * 72 * scale)}px`;
+      fieldEl.style.width = `${(field.width * 72 * scale)}px`;
+      fieldEl.style.height = `${(field.height * 72 * scale)}px`;
+
+      page.append(fieldEl);
+
+      this.createComponent(field, fieldEl, null);
+    });
+
+/*
     setTimeout(() => {
       const data = this.pdfViewer.getFormData()
       .subscribe((formFields: { pageNumber: number, fieldAnnotation: FieldAnnotation }[]) => {
@@ -186,42 +236,38 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
         });
       });
     });
+    */
   }
 
-  public createComponent(field: Field, selector, optionValue): void {
-    const annotation = this.el.querySelector(selector);
-          
-    if(annotation) {
-      annotation.classList.add('processed');
-      const injector = Injector.create({
-        parent: this._injector,
-        providers: [
-          {
-            provide: 'fieldService',
-            useValue: this._fieldService,
-          },
-          {
-            provide: 'field',
-            useValue: field,
-          },
-          {
-            provide: 'optionValue',
-            useValue: optionValue,
-          },
-        ],
-      });
+  public createComponent(field: Field, el, optionValue): void {
+    el.classList.add('processed');
+    const injector = Injector.create({
+      parent: this._injector,
+      providers: [
+        {
+          provide: 'fieldService',
+          useValue: this._fieldService,
+        },
+        {
+          provide: 'field',
+          useValue: field,
+        },
+        {
+          provide: 'optionValue',
+          useValue: optionValue,
+        },
+      ],
+    });
 
-      const componentPortal = new ComponentPortal(FieldComponent, null, injector);
-      const domPortalOutlet = new DomPortalOutlet(
-        annotation,
-        this._componentFactoryResolver,
-        this._appRef,
-        this._injector,
-      );
+    const componentPortal = new ComponentPortal(FieldComponent, null, injector);
+    const domPortalOutlet = new DomPortalOutlet(
+      el,
+      this._componentFactoryResolver,
+      this._appRef,
+      this._injector,
+    );
 
-      const componentRef = domPortalOutlet.attach(componentPortal);
-      this._fieldService.init(field, componentRef.instance);
-    }
+    domPortalOutlet.attach(componentPortal);      
   }
 
   public zoomIn(): void {
