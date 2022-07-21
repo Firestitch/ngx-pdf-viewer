@@ -3,14 +3,6 @@ import { FieldType } from '../enums';
 
 
 export function initField(field: Field): any {
-  if(field.type === FieldType.Checkbox) {
-    if(field.type === FieldType.Checkbox) {
-      if(!Array.isArray(field.value)) {
-        field.value = [];
-      }
-    }
-  }
-
   if(field.default && !field.value) {
     switch(field.type) {
       case FieldType.Date:

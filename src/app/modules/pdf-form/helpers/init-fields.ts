@@ -32,12 +32,14 @@ export function initFields(accum, field: Field): any {
         accum.push({
           ...field,
           optionValues: [optionValue],
+          value: null
         });
       }
     } else if(isCheckbox) {
       accum.push({
         ...field,
         optionValues: [optionValue],
+        value: []
       });
     }
   } else {

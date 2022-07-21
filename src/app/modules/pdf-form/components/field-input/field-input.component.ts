@@ -12,6 +12,7 @@ import { FieldType } from '../../enums';
 
 import { Field } from '../../classes';
 import { FieldService } from '../../services';
+import { filter, takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -42,6 +43,13 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   public ngOnInit(): void {
+    this._fieldService.fieldChanged$
+    .pipe(
+      takeUntil(this._destroy$),      
+    )
+    .subscribe(() => {
+      this._cdRef.markForCheck();  
+    });    
   }
 
   public ngOnChanges(changes: SimpleChanges): void {

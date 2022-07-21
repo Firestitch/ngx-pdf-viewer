@@ -88,9 +88,15 @@ export class FieldComponent implements OnInit, OnDestroy {
     if(this.field.type === FieldType.Checkbox) {
       const index = this.field.value.indexOf(this.optionValue.value);
       if(index === -1) {
-        this.field.value.push(this.optionValue.value);
+        this.field.value = [
+          ...this.field.value,
+          this.optionValue.value,
+        ];
       } else {
-        this.field.value.splice(index, 1);
+        this.field.value = this.field.value
+        .filter((_, idx) => {
+          return index !== idx;
+        });
       }
     } else if(this.field.type === FieldType.RadioButton) {
       this.field.value = this.optionValue.value;
