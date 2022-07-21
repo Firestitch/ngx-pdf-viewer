@@ -8,11 +8,11 @@ import {
 import { MatInput } from '@angular/material/input';
 
 import { of, Subject } from 'rxjs';
-import { FieldType } from '../../enums';
+import { FieldFormat, FieldType } from '../../enums';
 
 import { Field } from '../../classes';
 import { FieldService } from '../../services';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -31,8 +31,13 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   @Output() public closed = new EventEmitter<any>();
 
   public FieldType = FieldType;
+  public FieldFormat = FieldFormat;
   public nextField: Field;
   public backField: Field;
+  public radioButtonField = null;
+  public radioButtonFields = [];
+  public description;
+  public label;
 
   private _destroy$ = new Subject();
 
@@ -56,10 +61,50 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     if(changes.field) {
       this.backField = this._fieldService.getBackField(this.field);
       this.nextField = this._fieldService.getNextField(this.field);
+
+      this.description = '';
+      this.label = '';
+      if(this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
+        this._fieldService.getFields()
+        .filter((field: Field) => (
+          field.type === this.field.type &&
+          field.name === this.field.name
+        ))
+        .forEach((field) => {
+          this.label = field.groupLabel || this.label;
+          this.description = field.groupDescription || this.description;
+        });
+          
+        if(this.field.type === FieldType.RadioButton) {
+          this.radioButtonField = this.field;
+          this.radioButtonFields = this._fieldService.getFields()
+          .filter((field: Field) => (
+            field.type === FieldType.RadioButton &&
+            field.name === this.field.name
+          ));
+        } 
+       } else {
+        this.description = this.field.description;
+        this.description = this.field.label;
+       }
+
       setTimeout(() => {
         this.focus();
       }, 50);
     }
+  }
+
+  public radioButtonFieldChange(selectedField): void {
+    this._fieldService.getFields()
+    .filter((field: Field) => (
+      field.type === FieldType.RadioButton &&
+      field.name === this.field.name 
+    ))
+    .forEach((field: Field) => {
+      field.value = field === selectedField;
+    });
+
+    this._fieldService.changeField = selectedField;
   }
 
   public ngOnDestroy(): void {

@@ -16,13 +16,14 @@ export class Field implements PdfField {
   public required?: boolean;
   public format?: 'currency' | string;
   public formula?: string;
-  public optionValues?: { label: string, value: any, top: number, left: number, height: number, width: number }[];
   public top?: number;
   public left?: number;
   public width?: number;
   public height?: number;
   public pageNumber?: number;
   public default?: any;
+  public groupLabel?: string;
+  public groupDescription?: string;
 
   public get hasValue() {
     return this.value !== null && !!String(this.value).length;

@@ -9,45 +9,54 @@ export function initFields(accum, field: Field): any {
 
   field = initField(field);
 
-  if(isRadioButton || isCheckbox) {
-    const optionValue = { 
-      label: field.label, 
-      value: field.value || field.label, 
-      top: field.top, 
-      left: field.left, 
-      width: field.width, 
-      height: field.height, 
-    };
+  // if(isRadioButton || isCheckbox) {
+  //   const optionValue = { 
+  //     label: field.label, 
+  //     value: field.label, 
+  //     top: field.top, 
+  //     left: field.left, 
+  //     width: field.width, 
+  //     height: field.height, 
+  //   };
 
-    if(isRadioButton) {
-      const radioButtonField: Field = accum.find((fieldItem) => field.name === fieldItem.name);
+  //   if(field.groupLabel) {
+  //     field.label = field.groupLabel;
+  //   }
 
-      if(radioButtonField) {
-        radioButtonField.optionValues = [
-          ...radioButtonField.optionValues,
-          optionValue
-        ];
+  //   if(field.groupDescription) {
+  //     field.description = field.groupDescription;
+  //   }
 
-      } else {
-        accum.push({
-          ...field,
-          optionValues: [optionValue],
-          value: null
-        });
-      }
-    } else if(isCheckbox) {
-      accum.push({
-        ...field,
-        optionValues: [optionValue],
-        value: []
-      });
-    }
-  } else {
+  //   if(isRadioButton) {
+  //     const radioButtonField: Field = accum
+  //       .find((fieldItem) => field.name === fieldItem.name);
+
+  //     if(radioButtonField) {
+  //       radioButtonField.optionValues = [
+  //         ...radioButtonField.optionValues,
+  //         optionValue
+  //       ];
+
+  //     } else {
+  //       accum.push({
+  //         ...field,
+  //         optionValues: [optionValue],
+  //         value: null,
+  //       });
+  //     }
+  //   } else if(isCheckbox) {
+  //     accum.push({
+  //       ...field,
+  //       optionValues: [optionValue],
+  //       value: []
+  //     });
+  //   }
+  // } else {
     accum = [
       ...accum,
       field
     ];
-  }
+  //}
 
   return accum;
 }

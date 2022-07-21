@@ -1,6 +1,6 @@
 <form fsForm [submit]="submit" [dirtySubmitButton]="false">
   <div class="heading">
-    {{field.label}}
+    {{label}}
     <span 
         *ngIf="field.required"
         class="required">
@@ -9,12 +9,72 @@
   </div>
   <div 
       class="description"
-      *ngIf="field.description"
-      [innerHTML]="field.description">
+      *ngIf="description"
+      [innerHTML]="description">
   </div>
   
   <ng-container *ngIf="!field.readonly; else readonly">
-    <ng-container [ngSwitch]="field.type">
+    <ng-container [ngSwitch]="field.type">      
+      <ng-container *ngSwitchCase="FieldType.LongText">
+        <mat-form-field floatLabel="never">
+          <textarea
+            #input
+            matInput
+            [required]="field.required"
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()"
+            name="fieldInput">
+          </textarea>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="FieldType.ShortText">
+
+        <ng-container [ngSwitch]="field.format">
+          <ng-container *ngSwitchCase="FieldFormat.Currency">
+            <mat-form-field floatLabel="never">
+              <input
+                #input
+                matInput
+                [required]="field.required"
+                [(ngModel)]="field.value"
+                (ngModelChange)="change()"
+                [fsMask]="true"
+                format="currency"
+                name="shortText">
+              <div matPrefix>$ </div>
+            </mat-form-field> 
+          </ng-container>
+          <ng-container *ngSwitchCase="FieldFormat.Number">
+            <mat-form-field floatLabel="never">
+              <input
+                #input
+                matInput
+                [required]="field.required"
+                [attr.maxLength]="field.maxLength"
+                [(ngModel)]="field.value"
+                (ngModelChange)="change()"
+                fsMaskNumber
+                [scale]="10"
+                [signed]="true"
+                name="shortText">
+            </mat-form-field>
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <mat-form-field floatLabel="never">
+              <input
+                #input
+                matInput
+                [required]="field.required"
+                [attr.maxLength]="field.maxLength"
+                [(ngModel)]="field.value"
+                (ngModelChange)="change()"
+                name="shortText">
+            </mat-form-field>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
       <ng-container *ngSwitchCase="FieldType.Currency">
         <mat-form-field floatLabel="never">
           <input
@@ -28,39 +88,13 @@
           <div matPrefix>$&nbsp;</div>
         </mat-form-field>
       </ng-container>
-  
-      <ng-container *ngSwitchCase="FieldType.ShortText">
-        <mat-form-field floatLabel="never">
-          <input
-            #input
-            matInput
-            [fsFormMinLength]="field.minLength"
-            [fsFormMaxLength]="field.maxLength"
-            [fsFormNumeric]="field.numeric"
-            [(ngModel)]="field.value"
-            (ngModelChange)="change()"
-            [attr.maxLength]="field.maxLength"
-            name="fieldInput">
-        </mat-form-field>
-      </ng-container>
-  
-      <ng-container *ngSwitchCase="FieldType.Birthdate">
-        <mat-form-field floatLabel="never">
-          <input
-            #input
-            matInput
-            fsDatePickerBirthday
-            [(ngModel)]="field.value"
-            (ngModelChange)="change()"
-            name="fieldBirthdate">
-        </mat-form-field>
-      </ng-container>
-  
+
       <ng-container *ngSwitchCase="FieldType.Date">
         <mat-form-field floatLabel="never">
           <input
             #input
             matInput
+            [required]="field.required"
             fsDatePicker
             [(ngModel)]="field.value"
             (ngModelChange)="change()"
@@ -70,31 +104,26 @@
   
       <ng-container *ngSwitchCase="FieldType.RadioButton">
         <fs-radio-group
-            [(ngModel)]="field.value"
+            [(ngModel)]="radioButtonField"
             name="fieldRadioButton"
+            [required]="field.required"
             orientation="vertical"
-            (ngModelChange)="change()">
-          <mat-radio-button
-              *ngFor="let item of field.optionValues" 
-              [value]="item.value">
-            {{ item.label }}
+            (ngModelChange)="radioButtonFieldChange($event)">
+           <mat-radio-button
+              *ngFor="let radioButtonField of radioButtonFields" 
+              [value]="radioButtonField">
+            {{radioButtonField.label}}
           </mat-radio-button>
         </fs-radio-group>
       </ng-container>
   
       <ng-container *ngSwitchCase="FieldType.Checkbox">
-        <fs-checkbox-group
-            [(ngModel)]="field.value"
-            name="fieldCheckbox"
-            (ngModelChange)="change()"
-            orientation="vertical"
-            orientation="vertical">
           <mat-checkbox
-              *ngFor="let item of field.optionValues" 
-              [value]="item.value">
-            {{ item.label }}
-          </mat-checkbox>
-        </fs-checkbox-group>
+              name="fieldRadioButton"
+              [(ngModel)]="field.value"
+              (ngModelChange)="change()">
+            {{ field.label }}
+          </mat-checkbox> 
       </ng-container>
       <ng-container *ngSwitchCase="FieldType.Signature">  
         <fs-signature
