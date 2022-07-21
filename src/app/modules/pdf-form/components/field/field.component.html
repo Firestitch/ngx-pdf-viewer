@@ -1,6 +1,7 @@
 <div 
     class="field" 
     [tabindex]="field.index" 
+    [attr.data-guid]="field.guid"
     [class]="'field-' + field.type"
     (click)="fieldClick()"
     [ngClass]="{ 

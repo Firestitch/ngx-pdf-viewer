@@ -31,7 +31,14 @@
 </ng-container>  
 
 <ng-template #date>
-  {{field.value | fsDateFormat: field.format || 'full-date' }}
+  <ng-container [ngSwitch]="field.format">
+    <ng-container *ngSwitchCase="FieldFormat.YYYYMMDD">
+      {{field.value | fsDateFormat: 'yyyy/MM/dd' }}
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      {{field.value | fsDateFormat: 'date' }}
+    </ng-container>    
+  </ng-container>
 </ng-template>
 
 <ng-template #default>

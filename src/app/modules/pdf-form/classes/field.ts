@@ -8,7 +8,6 @@ export class Field implements PdfField {
   public label?: string;
   public description?: string;
   public value?: any;
-  public id?: string;
   public numeric?: boolean;
   public maxLength?: number; 
   public minLength?: number;

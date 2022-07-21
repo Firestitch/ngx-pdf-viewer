@@ -136,6 +136,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     this.fields
     .filter((field) => field.pageNumber === event.pageNumber)
     .reduce(initFields, [])
+    .sort((a,b) => a.index - b.index)
     .forEach((field: any) => {
       switch(field.type) {
         case FieldType.Checkbox:
