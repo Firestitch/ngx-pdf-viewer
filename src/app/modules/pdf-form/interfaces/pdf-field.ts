@@ -1,7 +1,7 @@
 import { FieldType } from '../enums';
 
 export interface PdfField {
-  type: FieldType;
+  type: FieldType | string;
   guid?: string;
   name?: string;
   value?: string;

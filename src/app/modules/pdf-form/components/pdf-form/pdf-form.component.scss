@@ -1,3 +1,6 @@
+:host {
+  height: 100%;
+}
 
 .container {
   height: 100%;
@@ -48,9 +51,8 @@ mat-sidenav {
     display: none;
   }
 
-  .textWidgetAnnotation input,
-  .buttonWidgetAnnotation input {
-    display: none;
+  .mat-sidenav-content {
+    padding: 0;
   }
 
   .mat-drawer-content {

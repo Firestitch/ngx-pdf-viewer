@@ -28,6 +28,7 @@ import { Field } from '../../classes';
 import { FieldInputComponent } from '../field-input/field-input.component';
 import { FieldService } from '../../services';
 import { FieldType } from '../../enums';
+import { initFields } from '../../helpers/init-fields';
 
 
 @Component({
@@ -134,109 +135,37 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
     this.fields
     .filter((field) => field.pageNumber === event.pageNumber)
-    .reduce((accum, field: Field) => {
-      if(field.type === FieldType.RadioButton) {
-        const radioButtonField: Field = accum.find((fieldItem) => field.name === fieldItem.name);
-        if(radioButtonField) {
-          radioButtonField.optionValues = [
-            ...radioButtonField.optionValues,
-            ...field.optionValues
-          ];
-
-        } else {
-          accum = [
-            ...accum,
-            {
-              ...field,
-            }
-          ];
-        }
-      } else {
-        accum = [
-          ...accum,
-          field
-        ];
-      }
-
-      return accum;
-    },[])    
+    .reduce(initFields, [])
     .forEach((field: any) => {
-      const fieldEl = document.createElement('div');
-      fieldEl.classList.add('field-container-field');
+      switch(field.type) {
+        case FieldType.Checkbox:
+        case FieldType.RadioButton:
+          field.optionValues
+          .forEach((optionValue) => {
+            const fieldEl = this.createElement(page, scale, optionValue.top, optionValue.left, optionValue.width, optionValue.height);
+            this.createComponent(field, fieldEl, optionValue);
+          });
 
-      fieldEl.style.top = `${(field.top * 72 * scale)}px`;
-      fieldEl.style.left = `${(field.left * 72 * scale)}px`;
-      fieldEl.style.width = `${(field.width * 72 * scale)}px`;
-      fieldEl.style.height = `${(field.height * 72 * scale)}px`;
+          break;
 
-      page.append(fieldEl);
-
-      this.createComponent(field, fieldEl, null);
+        default:
+          const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
+          this.createComponent(field, fieldEl, null);
+      }            
     });
+  }
+  
+  public createElement(page, scale, top, left, width, height) {
+    const fieldEl = document.createElement('div');
+    fieldEl.classList.add('field-container-field');
+    fieldEl.style.top = `${(top * 72 * scale)}px`;
+    fieldEl.style.left = `${(left * 72 * scale)}px`;
+    fieldEl.style.width = `${(width * 72 * scale)}px`;
+    fieldEl.style.height = `${(height * 72 * scale)}px`;
 
-/*
-    setTimeout(() => {
-      const data = this.pdfViewer.getFormData()
-      .subscribe((formFields: { pageNumber: number, fieldAnnotation: FieldAnnotation }[]) => {
-        const fields: Field[] = formFields
-        .filter((formField) => formField.pageNumber === event.pageNumber)
-        .map((formField) => initField(formField.fieldAnnotation, this.fields))
-        .reduce((accum, field: Field) => {
-          if(field.type === FieldType.RadioButton) {
-            const radioButtonField: Field = accum.find((fieldItem) => field.name === fieldItem.name);
-            if(radioButtonField) {
-              radioButtonField.optionValues = [
-                ...radioButtonField.optionValues,
-                ...field.optionValues
-              ];
+    page.append(fieldEl);
 
-            } else {
-              accum = [
-                ...accum,
-                {
-                  ...field,
-                }
-              ];
-            }
-          } else {
-            accum = [
-              ...accum,
-              field
-            ];
-          }
-
-          return accum;
-        },[])
-        .sort((a, b) => a.index - b.index);
-
-        fields.forEach((field) => {
-          if(field.value === null) {
-            const valueField = this.fields.find((item) => item.name === field.name);
-
-            if(valueField) {
-              field.value = valueField.value;
-            }
-          }
-
-          switch(field.type) {
-            case FieldType.Checkbox:
-            case FieldType.RadioButton:
-              field.optionValues
-              .forEach((optionValue) => {
-                const selector = `.page[data-page-number="${event.pageNumber}"] .buttonWidgetAnnotation[data-annotation-id="${optionValue.id}"]:not(.processed)`;
-                this.createComponent(field, selector, optionValue);
-              });
-
-            break;
-
-            default: 
-              const selector = `.page[data-page-number="${event.pageNumber}"] .textWidgetAnnotation[data-annotation-id="${field.id}"]:not(.processed)`;
-              this.createComponent(field, selector, null);
-          }
-        });
-      });
-    });
-    */
+    return fieldEl;
   }
 
   public createComponent(field: Field, el, optionValue): void {
@@ -282,5 +211,4 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     this._destroy$.next();
     this._destroy$.complete();
   }
-
 }

@@ -8,11 +8,15 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="FieldType.RadioButton">
-    <img src="assets/check.svg" *ngIf="field.value === optionValue.value">
+    <ng-container *ngIf="field.value === optionValue.value">
+      <ng-container *ngTemplateOutlet="checkmark"></ng-container>
+    </ng-container>
   </ng-container>
 
   <ng-container *ngSwitchCase="FieldType.Checkbox">
-    <img src="assets/check.svg" *ngIf="field.value.indexOf(optionValue.value) !== -1">
+    <ng-container *ngIf="field.value.indexOf(optionValue.value) !== -1">
+      <ng-container *ngTemplateOutlet="checkmark"></ng-container>
+    </ng-container>    
   </ng-container>
 
   <ng-container *ngSwitchCase="FieldType.Signature">  
@@ -32,4 +36,10 @@
 
 <ng-template #default>
   {{field.value}}
+</ng-template>
+
+<ng-template #checkmark>
+  <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.172 18.657a1 1 0 0 1-.707-.293l-5.657-5.657a1 1 0 0 1 1.414-1.414l4.95 4.95L19.778 5.636a1 1 0 0 1 1.414 1.414L9.879 18.364a1 1 0 0 1-.707.293z"/>
+  </svg>
 </ng-template>

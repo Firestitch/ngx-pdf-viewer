@@ -55,14 +55,14 @@ export class FieldService implements OnDestroy {
     this.getFields()
     .filter((field) => !!field.formula)
     .forEach((field) => {
-      let formula = field.formula;
-      this.getFields().forEach((variableField) => {
-        if(!Array.isArray(variableField.value)) {
-          formula = formula.replace(variableField.name, variableField.value || 0);
-        }
-      });      
-
       try {
+        let formula = String(field.formula);
+        this.getFields().forEach((variableField) => {
+          if(variableField.name && !Array.isArray(variableField.value)) {
+            formula = formula.replace(variableField.name, variableField.value || 0);
+          }
+        });   
+                
         field.value = eval(formula);    
       } catch(e) {
         console.warn(`Formula error: ${e}`);
