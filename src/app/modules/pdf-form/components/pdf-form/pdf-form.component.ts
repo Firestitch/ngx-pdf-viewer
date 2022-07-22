@@ -138,21 +138,8 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .reduce(initFields, [])
     .sort((a,b) => a.index - b.index)
     .forEach((field: any) => {
-      // switch(field.type) {
-      //   case FieldType.Checkbox:
-      //   case FieldType.RadioButton:
-      //     field.optionValues
-      //     .forEach((optionValue) => {
-      //       const fieldEl = this.createElement(page, scale, optionValue.top, optionValue.left, optionValue.width, optionValue.height);
-      //       this.createComponent(field, fieldEl, optionValue);
-      //     });
-
-      //     break;
-
-      //   default:
-          const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
-          this.createComponent(field, fieldEl, null);
-      //}            
+        const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
+        this.createComponent(field, fieldEl, null);
     });
   }
   
