@@ -1,62 +1,13 @@
-import { Field } from '../classes/field';
-import { FieldType } from '../enums';
+import { PdfField } from '../interfaces';
 import { initField } from './init-field';
 
 
-export function initFields(accum, field: Field): any {
-  const isRadioButton = field.type === FieldType.RadioButton;
-  const isCheckbox = field.type === FieldType.Checkbox;
-
+export function initFields(accum, field: PdfField): any {
   field = initField(field);
-
-  // if(isRadioButton || isCheckbox) {
-  //   const optionValue = { 
-  //     label: field.label, 
-  //     value: field.label, 
-  //     top: field.top, 
-  //     left: field.left, 
-  //     width: field.width, 
-  //     height: field.height, 
-  //   };
-
-  //   if(field.groupLabel) {
-  //     field.label = field.groupLabel;
-  //   }
-
-  //   if(field.groupDescription) {
-  //     field.description = field.groupDescription;
-  //   }
-
-  //   if(isRadioButton) {
-  //     const radioButtonField: Field = accum
-  //       .find((fieldItem) => field.name === fieldItem.name);
-
-  //     if(radioButtonField) {
-  //       radioButtonField.optionValues = [
-  //         ...radioButtonField.optionValues,
-  //         optionValue
-  //       ];
-
-  //     } else {
-  //       accum.push({
-  //         ...field,
-  //         optionValues: [optionValue],
-  //         value: null,
-  //       });
-  //     }
-  //   } else if(isCheckbox) {
-  //     accum.push({
-  //       ...field,
-  //       optionValues: [optionValue],
-  //       value: []
-  //     });
-  //   }
-  // } else {
     accum = [
       ...accum,
       field
     ];
-  //}
 
   return accum;
 }

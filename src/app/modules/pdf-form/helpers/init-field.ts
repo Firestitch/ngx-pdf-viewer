@@ -1,8 +1,8 @@
-import { Field } from '../classes/field';
 import { FieldType } from '../enums';
+import { PdfField } from '../interfaces';
 
 
-export function initField(field: Field): any {
+export function initField(field: PdfField): any {
   field.index = (field.index || 0) + (field.pageNumber * 1000);
 
   if(field.default && !field.value) {

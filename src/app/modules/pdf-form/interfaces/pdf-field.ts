@@ -4,7 +4,7 @@ export interface PdfField {
   type: FieldType | string;
   guid?: string;
   name?: string;
-  value?: string;
+  value?: any;
   required?: boolean;
   readonly?: boolean;
   numeric?: boolean;

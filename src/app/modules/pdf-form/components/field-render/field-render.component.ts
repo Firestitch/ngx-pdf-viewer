@@ -10,8 +10,8 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { Field } from '../../classes';
 import { FieldFormat, FieldType } from '../../enums';
+import { PdfField } from '../../interfaces';
 import { FieldService } from '../../services/field-service';
 
 
@@ -24,7 +24,7 @@ import { FieldService } from '../../services/field-service';
 })
 export class FieldRenderComponent implements OnInit, OnDestroy {
 
-  @Input() public field: Field;
+  @Input() public field: PdfField;
   @Input() public optionValue;
 
   public FieldType = FieldType;

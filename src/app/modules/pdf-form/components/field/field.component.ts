@@ -11,9 +11,10 @@ import {
   NgxExtendedPdfViewerService,
 } from 'ngx-extended-pdf-viewer';
 
-import { Field } from '../../classes';
 import { FieldFormat, FieldType } from '../../enums';
 import { FieldService } from '../../services/field-service';
+import { PdfField } from '../../interfaces';
+import { hasValue } from '../../helpers';
 
 
 @Component({
@@ -36,7 +37,7 @@ export class FieldComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject();
 
   constructor(
-    @Inject('field') private _field: Field,
+    @Inject('field') private _field: PdfField,
     @Inject('fieldService') private _fieldService: FieldService,
     @Inject('optionValue') public optionValue: { value: any, label: any },
     private _cdRef: ChangeDetectorRef,
@@ -51,7 +52,7 @@ export class FieldComponent implements OnInit, OnDestroy {
         this.selected = false;
         this._cdRef.markForCheck();
       }),
-      filter((field: Field) => field === this._field),
+      filter((field: PdfField) => field === this._field),
       takeUntil(this._destroy$),
     )
     .subscribe(() => {
@@ -68,15 +69,19 @@ export class FieldComponent implements OnInit, OnDestroy {
     });    
   }
   
+  public get hasValue(): boolean {
+    return hasValue(this.field)
+  }
+  
   public select(): void {
     this._fieldService.selectField = this._field;
   }
 
-  public get field(): Field {
+  public get field(): PdfField {
     return this._field;
   }
 
-  public set field(field: Field) {
+  public set field(field: PdfField) {
     this._field = field;
   }
 
@@ -91,12 +96,12 @@ export class FieldComponent implements OnInit, OnDestroy {
     } else if(this.field.type === FieldType.RadioButton) {
       this.field.value = true;
       this._fieldService.getFields()
-      .filter((field: Field) => (
+      .filter((field: PdfField) => (
         field.type === FieldType.RadioButton &&
         field.name === this.field.name && 
         field !== this.field
       ))
-      .forEach((field: Field) => {
+      .forEach((field: PdfField) => {
         field.value = false
       });
     }

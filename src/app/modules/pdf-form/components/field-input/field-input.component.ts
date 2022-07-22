@@ -10,9 +10,9 @@ import { MatInput } from '@angular/material/input';
 import { of, Subject } from 'rxjs';
 import { FieldFormat, FieldType } from '../../enums';
 
-import { Field } from '../../classes';
 import { FieldService } from '../../services';
 import { takeUntil } from 'rxjs/operators';
+import { PdfField } from '../../interfaces';
 
 
 @Component({
@@ -26,14 +26,14 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('input', { read: MatInput })
   public input: MatInput;
 
-  @Input() public field: Field;
+  @Input() public field: PdfField;
 
   @Output() public closed = new EventEmitter<any>();
 
   public FieldType = FieldType;
   public FieldFormat = FieldFormat;
-  public nextField: Field;
-  public backField: Field;
+  public nextField: PdfField;
+  public backField: PdfField;
   public radioButtonField = null;
   public radioButtonFields = [];
   public description;
@@ -66,7 +66,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
       this.label = '';
       if(this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
         this._fieldService.getFields()
-        .filter((field: Field) => (
+        .filter((field: PdfField) => (
           field.type === this.field.type &&
           field.name === this.field.name
         ))
@@ -78,7 +78,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
         if(this.field.type === FieldType.RadioButton) {
           this.radioButtonField = this.field;
           this.radioButtonFields = this._fieldService.getFields()
-          .filter((field: Field) => (
+          .filter((field: PdfField) => (
             field.type === FieldType.RadioButton &&
             field.name === this.field.name
           ));
@@ -96,11 +96,11 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
 
   public radioButtonFieldChange(selectedField): void {
     this._fieldService.getFields()
-    .filter((field: Field) => (
+    .filter((field: PdfField) => (
       field.type === FieldType.RadioButton &&
       field.name === this.field.name 
     ))
-    .forEach((field: Field) => {
+    .forEach((field: PdfField) => {
       field.value = field === selectedField;
     });
 

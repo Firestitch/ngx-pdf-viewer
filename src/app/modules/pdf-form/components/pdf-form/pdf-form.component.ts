@@ -24,10 +24,8 @@ import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 import { FieldComponent } from '../field/field.component';
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
 import { PdfField } from '../../interfaces';
-import { Field } from '../../classes';
 import { FieldInputComponent } from '../field-input/field-input.component';
 import { FieldService } from '../../services';
-import { FieldType } from '../../enums';
 import { initFields } from '../../helpers/init-fields';
 
 
@@ -54,14 +52,14 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public fields: PdfField[] = [];
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
 
-  @Output() public fieldChanged = new EventEmitter<Field>();
+  @Output() public fieldChanged = new EventEmitter<PdfField>();
   @Output() public closed = new EventEmitter();
   @Output() public finished = new EventEmitter();
   @Output() public started = new EventEmitter();
 
   public hasStarted = false;
   public zoom = 100;
-  public field: Field;
+  public field: PdfField;
   public sidenav: any = {
     opened: false,
     mode: 'side',
@@ -84,7 +82,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .pipe(
       takeUntil(this._destroy$),
     )
-    .subscribe((field: Field) => {
+    .subscribe((field: PdfField) => {
       this.field = field;
       this.sidenav.opened = !!field;
       this._cdRef.markForCheck();
@@ -94,7 +92,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .pipe(
       takeUntil(this._destroy$),
     )
-    .subscribe((field: Field) => {
+    .subscribe((field: PdfField) => {
       this.fieldChanged.next(field);
     });
 
@@ -156,7 +154,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     return fieldEl;
   }
 
-  public createComponent(field: Field, el, optionValue): void {
+  public createComponent(field: PdfField, el, optionValue): void {
     el.classList.add('processed');
     const injector = Injector.create({
       parent: this._injector,
