@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy,
-  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener, 
+  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -34,12 +34,15 @@ export class FieldComponent implements OnInit, OnDestroy {
   public FieldType = FieldType;
   public FieldFormat = FieldFormat;
 
+  public fontScaleThreshold = 9;
+
   private _destroy$ = new Subject();
 
   constructor(
     @Inject('field') private _field: PdfField,
     @Inject('fieldService') private _fieldService: FieldService,
     @Inject('optionValue') public optionValue: { value: any, label: any },
+    @Inject('scale') public scale: number,
     private _cdRef: ChangeDetectorRef,
     protected _sanitizer: DomSanitizer,
   ) {}
@@ -57,7 +60,7 @@ export class FieldComponent implements OnInit, OnDestroy {
     )
     .subscribe(() => {
       this.selected = true;
-      this._cdRef.markForCheck();  
+      this._cdRef.markForCheck();
     });
 
     this._fieldService.fieldChanged$
@@ -65,14 +68,14 @@ export class FieldComponent implements OnInit, OnDestroy {
       takeUntil(this._destroy$),
     )
     .subscribe(() => {
-      this._cdRef.markForCheck();  
-    });    
+      this._cdRef.markForCheck();
+    });
   }
-  
+
   public get hasValue(): boolean {
     return hasValue(this.field)
   }
-  
+
   public select(): void {
     this._fieldService.selectField = this._field;
   }
@@ -98,7 +101,7 @@ export class FieldComponent implements OnInit, OnDestroy {
       this._fieldService.getFields()
       .filter((field: PdfField) => (
         field.type === FieldType.RadioButton &&
-        field.name === this.field.name && 
+        field.name === this.field.name &&
         field !== this.field
       ))
       .forEach((field: PdfField) => {

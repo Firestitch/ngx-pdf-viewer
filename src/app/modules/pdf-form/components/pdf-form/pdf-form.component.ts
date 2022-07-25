@@ -76,8 +76,8 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     private _fieldService: FieldService,
   ) {}
 
-  public ngOnInit(): void {  
-    this._fieldService.containerEl = this.sidenavContent.getElementRef().nativeElement;  
+  public ngOnInit(): void {
+    this._fieldService.containerEl = this.sidenavContent.getElementRef().nativeElement;
     this._fieldService.field$
     .pipe(
       takeUntil(this._destroy$),
@@ -87,7 +87,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       this.sidenav.opened = !!field;
       this._cdRef.markForCheck();
     });
-    
+
     this._fieldService.fieldChanged$
     .pipe(
       takeUntil(this._destroy$),
@@ -103,7 +103,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.finished.emit();
       });
-      
+
     this.started
       .pipe(
         takeUntil(this._destroy$),
@@ -137,10 +137,10 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     .sort((a,b) => a.index - b.index)
     .forEach((field: any) => {
         const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
-        this.createComponent(field, fieldEl, null);
+        this.createComponent(field, fieldEl, null, scale);
     });
   }
-  
+
   public createElement(page, scale, top, left, width, height) {
     const fieldEl = document.createElement('div');
     fieldEl.classList.add('field-container-field');
@@ -154,7 +154,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     return fieldEl;
   }
 
-  public createComponent(field: PdfField, el, optionValue): void {
+  public createComponent(field: PdfField, el, optionValue, scale): void {
     el.classList.add('processed');
     const injector = Injector.create({
       parent: this._injector,
@@ -171,6 +171,10 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
           provide: 'optionValue',
           useValue: optionValue,
         },
+        {
+          provide: 'scale',
+          useValue: scale,
+        },
       ],
     });
 
@@ -182,17 +186,17 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       this._injector,
     );
 
-    domPortalOutlet.attach(componentPortal);      
+    domPortalOutlet.attach(componentPortal);
   }
 
   public zoomIn(): void {
     this.zoom += 20;
   }
-  
+
   public zoomOut(): void {
     this.zoom -= 20;
   }
-  
+
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
