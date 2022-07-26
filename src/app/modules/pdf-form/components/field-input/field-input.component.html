@@ -23,6 +23,7 @@
             [required]="field.required"
             [(ngModel)]="field.value"
             (ngModelChange)="change()"
+            (blur)="blur()"
             (keydown)="inputKeyDown($event)"
             name="fieldInput">
           </textarea>
@@ -30,7 +31,6 @@
       </ng-container>
 
       <ng-container *ngSwitchCase="FieldType.ShortText">
-
         <ng-container [ngSwitch]="field.format">
           <ng-container *ngSwitchCase="FieldFormat.Currency">
             <mat-form-field floatLabel="never">
@@ -40,6 +40,7 @@
                 [required]="field.required"
                 [(ngModel)]="field.value"
                 (ngModelChange)="change()"
+                (blur)="blur()"
                 (keydown)="inputKeyDown($event)"
                 [fsMask]="true"
                 format="currency"
@@ -55,7 +56,8 @@
                 [required]="field.required"
                 [attr.maxLength]="field.maxLength"
                 [(ngModel)]="field.value"
-                (ngModelChange)="change()"
+                (ngModelChange)="change()"              
+                (blur)="blur()"
                 (keydown)="inputKeyDown($event)"
                 fsMaskNumber
                 [scale]="10"
@@ -71,27 +73,13 @@
                 [required]="field.required"
                 [attr.maxLength]="field.maxLength"
                 [(ngModel)]="field.value"
-                (ngModelChange)="change()"
+                (ngModelChange)="change()"                
+                (blur)="blur()"
                 (keydown)="inputKeyDown($event)"
                 name="shortText">
             </mat-form-field>
           </ng-container>
         </ng-container>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="FieldType.Currency">
-        <mat-form-field floatLabel="never">
-          <input
-            #input
-            matInput
-            [(ngModel)]="field.value"
-            (ngModelChange)="change()"
-            (keydown)="inputKeyDown($event)"
-            [fsMask]="true"
-            format="currency"
-            name="fieldCurrency">
-          <div matPrefix>$&nbsp;</div>
-        </mat-form-field>
       </ng-container>
 
       <ng-container *ngSwitchCase="FieldType.Date">
@@ -103,6 +91,7 @@
             fsDatePicker
             [(ngModel)]="field.value"
             (ngModelChange)="change()"
+            (blur)="blur()"
             (keydown)="inputKeyDown($event)"
             name="fieldDate">
         </mat-form-field>

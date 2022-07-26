@@ -6,6 +6,7 @@ import { FsPrompt } from '@firestitch/prompt';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { hasValue } from '../helpers';
 import { PdfField } from '../interfaces';
+import { FieldChange } from '../types';
 
 
 @Injectable()
@@ -15,7 +16,7 @@ export class FieldService implements OnDestroy {
   public containerEl;
 
   private _field$ = new BehaviorSubject<PdfField>(null);
-  private _fieldChanged$ = new Subject<PdfField>();
+  private _fieldChanged$ = new Subject<FieldChange>();
   private _finished$ = new Subject<any>();
   private _destroy$ = new Subject();
 
@@ -35,7 +36,7 @@ export class FieldService implements OnDestroy {
     return this._field$;
   }
 
-  public get fieldChanged$(): Subject<PdfField> {
+  public get fieldChanged$(): Subject<FieldChange> {
     return this._fieldChanged$;
   }
 
@@ -51,7 +52,7 @@ export class FieldService implements OnDestroy {
     this._field$.next(field); 
   }
 
-  public set changeField(changeField: PdfField) {
+  public set changeField(changeField: FieldChange) {
     this.getFields()
     .filter((field) => !!field.formula)
     .forEach((field) => {

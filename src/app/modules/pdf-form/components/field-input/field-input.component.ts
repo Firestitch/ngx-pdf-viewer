@@ -75,9 +75,9 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     if(changes.field) {
       this.backField = this._fieldService.getBackField(this.field);
       this.nextField = this._fieldService.getNextField(this.field);
-
       this.description = '';
       this.label = '';
+
       if(this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
         this._fieldService.getFields()
         .filter((field: PdfField) => (
@@ -127,7 +127,11 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public change(): void {
-    this._fieldService.changeField = this.field;
+    this._fieldService.changeField = { field: this.field, event: 'change' };
+  }
+
+  public blur(): void {
+    this._fieldService.changeField = { field: this.field, event: 'blur' };
   }
 
   public focus(): void {

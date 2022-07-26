@@ -16,7 +16,7 @@ import {
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { MatSidenavContent } from '@angular/material/sidenav';
 
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
@@ -27,6 +27,8 @@ import { PdfField } from '../../interfaces';
 import { FieldInputComponent } from '../field-input/field-input.component';
 import { FieldService } from '../../services';
 import { initFields } from '../../helpers/init-fields';
+import { FieldChange } from '../../types';
+import { FieldType } from '../../enums';
 
 
 @Component({
@@ -51,6 +53,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public name;
   @Input() public fields: PdfField[] = [];
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
+  @Input() public fieldUpdateOn: 'blur' | 'change' = 'change';
 
   @Output() public fieldChanged = new EventEmitter<PdfField>();
   @Output() public closed = new EventEmitter();
@@ -90,10 +93,26 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
     this._fieldService.fieldChanged$
     .pipe(
+      filter((fieldChange: FieldChange): boolean => {
+        if(this.fieldUpdateOn === 'blur') {
+          switch(fieldChange.field.type) {
+            case FieldType.Checkbox:
+            case FieldType.RadioButton:
+            case FieldType.Date:
+            case FieldType.Signature:
+              return true;
+
+            default:
+              return fieldChange.event === 'blur';
+          }          
+        }
+
+        return true;
+      }), 
       takeUntil(this._destroy$),
     )
-    .subscribe((field: PdfField) => {
-      this.fieldChanged.next(field);
+    .subscribe((fieldChange: FieldChange) => {
+      this.fieldChanged.next(fieldChange.field);
     });
 
     this._fieldService.finished$
@@ -120,6 +139,10 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
   public get el(): any {
    return this._el.nativeElement;
+  }
+
+  public getFields(): PdfField[] {
+   return this._fieldService.getFields();
   }
 
   public pageRendered(event: PageRenderedEvent): void {

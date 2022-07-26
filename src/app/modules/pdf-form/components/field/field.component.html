@@ -6,7 +6,7 @@
     (click)="fieldClick()"
     [ngClass]="{
       selected: selected,
-      currency: field.type === FieldType.Currency || field.format === FieldFormat.Currency,
+      currency: field.format === FieldFormat.Currency,
       'has-value': hasValue,
       required: field.required
     }">

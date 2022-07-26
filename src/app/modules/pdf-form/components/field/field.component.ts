@@ -109,7 +109,7 @@ export class FieldComponent implements OnInit, OnDestroy {
       });
     }
 
-    this._fieldService.changeField = this.field;
+    this._fieldService.changeField = { field: this.field, event: 'change' };
   }
 
   public ngOnDestroy(): void {

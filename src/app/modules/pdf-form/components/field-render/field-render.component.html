@@ -1,8 +1,4 @@
 <ng-container [ngSwitch]="field.type">
-  <ng-container *ngSwitchCase="FieldType.Birthdate">
-    <ng-container *ngTemplateOutlet="date"></ng-container>
-  </ng-container>
-
   <ng-container *ngSwitchCase="FieldType.Date">
     <ng-container *ngTemplateOutlet="date"></ng-container>
   </ng-container>
@@ -20,7 +16,7 @@
   </ng-container>
 
   <ng-container *ngSwitchDefault>
-    <ng-container *ngIf="field.type === FieldType.Currency || field.format === FieldFormat.Currency; else default">
+    <ng-container *ngIf="field.format === FieldFormat.Currency; else default">
       {{field.value | fsFormatCurrency }}
     </ng-container>
   </ng-container>
