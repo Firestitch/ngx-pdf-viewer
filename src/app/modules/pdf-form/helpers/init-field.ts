@@ -3,7 +3,7 @@ import { PdfField } from '../interfaces';
 
 
 export function initField(field: PdfField): any {
-  field.index = (field.index || 0) + (field.pageNumber * 1000);
+  field.tabIndex = (field.tabIndex || 0) + (field.pageNumber * 1000);
 
   if(field.default && !field.value) {
     switch(field.type) {

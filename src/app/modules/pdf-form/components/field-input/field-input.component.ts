@@ -7,12 +7,13 @@ import {
 
 import { MatInput } from '@angular/material/input';
 
-import { of, Subject } from 'rxjs';
+import { fromEvent, of, Subject } from 'rxjs';
 import { FieldFormat, FieldType } from '../../enums';
 
 import { FieldService } from '../../services';
 import { takeUntil } from 'rxjs/operators';
 import { PdfField } from '../../interfaces';
+import { FsFormDirective } from '@firestitch/form';
 
 
 @Component({
@@ -25,6 +26,9 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
 
   @ViewChild('input', { read: MatInput })
   public input: MatInput;
+  
+  @ViewChild(FsFormDirective)
+  public form: FsFormDirective;
 
   @Input() public field: PdfField;
 
@@ -54,7 +58,17 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     )
     .subscribe(() => {
       this._cdRef.markForCheck();  
-    });    
+    }); 
+  }
+  
+  public inputKeyDown(event: KeyboardEvent): void {
+    if(event.code === 'Tab') {
+      if(event.shiftKey) {
+        this.back();
+      } else {
+        this.form.triggerSubmit();
+      }
+    }
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -85,7 +99,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
         } 
        } else {
         this.description = this.field.description;
-        this.description = this.field.label;
+        this.label = this.field.label;
        }
 
       setTimeout(() => {

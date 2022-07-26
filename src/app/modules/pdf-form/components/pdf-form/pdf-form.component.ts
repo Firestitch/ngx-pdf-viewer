@@ -134,7 +134,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     this.fields
     .filter((field) => field.pageNumber === event.pageNumber)
     .reduce(initFields, [])
-    .sort((a,b) => a.index - b.index)
+    .sort((a,b) => a.tabIndex - b.tabIndex)
     .forEach((field: any) => {
         const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
         this.createComponent(field, fieldEl, null, scale);

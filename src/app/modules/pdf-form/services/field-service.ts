@@ -147,7 +147,7 @@ export class FieldService implements OnDestroy {
   public scrollToField(field: PdfField): void {
     const el: any = this.containerEl.querySelector(`.field[data-guid="${field.guid}"]`);
     if(el) {
-      this.containerEl.scroll({top: this.getOffsetTop(el), behavior: 'smooth'});
+      this.containerEl.scroll({top: this.getOffsetTop(el) - 50, behavior: 'smooth'});
     }
   }
 
