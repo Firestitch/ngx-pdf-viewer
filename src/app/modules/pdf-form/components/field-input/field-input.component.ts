@@ -7,7 +7,7 @@ import {
 
 import { MatInput } from '@angular/material/input';
 
-import { fromEvent, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { FieldFormat, FieldType } from '../../enums';
 
 import { FieldService } from '../../services';
@@ -90,12 +90,15 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
         });
           
         if(this.field.type === FieldType.RadioButton) {
-          this.radioButtonField = this.field;
           this.radioButtonFields = this._fieldService.getFields()
-          .filter((field: PdfField) => (
-            field.type === FieldType.RadioButton &&
-            field.name === this.field.name
-          ));
+            .filter((field: PdfField) => (
+              field.type === FieldType.RadioButton &&
+              field.name === this.field.name
+            ));
+
+          
+          this.radioButtonField = this.radioButtonFields
+          .find((field) => (field.value));
         } 
        } else {
         this.description = this.field.description;
@@ -108,17 +111,28 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  public radioButtonFieldChange(selectedField): void {
-    this._fieldService.getFields()
-    .filter((field: PdfField) => (
-      field.type === FieldType.RadioButton &&
-      field.name === this.field.name 
-    ))
-    .forEach((field: PdfField) => {
-      field.value = field === selectedField;
-    });
+  public radioButtonFieldChange(selectedField: PdfField): void {
+    if(selectedField) {
+      this._fieldService.getFields()
+      .filter((field: PdfField) => (
+        field.type === FieldType.RadioButton &&
+        field.name === this.field.name 
+      ))
+      .forEach((field: PdfField) => {
+        field.value = field === selectedField;
+      });
 
-    this._fieldService.changeField = selectedField;
+      this._fieldService.changeField = { field: selectedField, event: 'change' };
+    } else {
+      this._fieldService.getFields()
+      .filter((field: PdfField) => (
+        field.type === FieldType.RadioButton && field.value
+      ))
+      .forEach((field: PdfField) => {
+        field.value = false;        
+        this._fieldService.changeField = { field, event: 'change' };
+      });
+    }
   }
 
   public ngOnDestroy(): void {

@@ -104,6 +104,11 @@
             [required]="field.required"
             orientation="vertical"
             (ngModelChange)="radioButtonFieldChange($event)">
+            <mat-radio-button
+                *ngIf="!field.required"
+                [value]="null">
+              Unspecified
+            </mat-radio-button>
            <mat-radio-button
               *ngFor="let radioButtonField of radioButtonFields" 
               [value]="radioButtonField">

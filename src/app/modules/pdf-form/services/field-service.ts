@@ -2,8 +2,9 @@ import { Injectable, OnDestroy } from '@angular/core';
 
 import { FsPrompt } from '@firestitch/prompt';
 
-
 import { BehaviorSubject, Subject } from 'rxjs';
+
+import { FieldType } from '../enums';
 import { hasValue } from '../helpers';
 import { PdfField } from '../interfaces';
 import { FieldChange } from '../types';
@@ -126,23 +127,51 @@ export class FieldService implements OnDestroy {
   }
 
   public getFieldIndex(field: PdfField): number {
-    const fields = this.getFields();
-    return fields.indexOf(field);
+    return this.getFields().indexOf(field);
   }
 
   public getNextField(field: PdfField): PdfField {
+    if(field.type === FieldType.RadioButton) {
+      return this.getGroupedRadioButtonFieldSibling(field, 1);
+    }
+
     const index = this.getFieldIndex(field);
     return index === -1 ? null : this.getFields()[index + 1];
   }
 
   public getBackField(field: PdfField): PdfField {
-    const index = this.getFieldIndex(field);
-    return index === -1 ? null : this.getFields()[index - 1];
+    const fields = this.getGroupedRadioButtonFields();
+    const index = fields.indexOf(field);
+    return index === -1 ? null : fields[index - 1];
   }
 
   public getFirstField(): PdfField {
     const fields = this.getFields();
     return fields[0];
+  }
+
+  public getGroupedRadioButtonFieldSibling(field: PdfField, position: number): PdfField {
+    const fields: PdfField[] = this.getGroupedRadioButtonFields();
+
+    const index = fields
+    .findIndex((itemField: PdfField) => {
+      return field.name === itemField.name;
+    });
+
+    return index === -1 ? null : fields[index + position];
+  }
+
+  public getGroupedRadioButtonFields(): PdfField[] {
+    return Object.values(this.getFields()
+    .reduce((accum, field: PdfField) => {
+      const name = field.type === FieldType.RadioButton ? field.name || field.guid : field.guid;
+      
+      if(!accum[name]) {
+        accum[name] = field;
+      }
+
+      return accum;
+    }, {}));
   }
   
   public scrollToField(field: PdfField): void {
