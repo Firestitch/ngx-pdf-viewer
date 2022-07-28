@@ -12,7 +12,7 @@
       *ngIf="description"
       [innerHTML]="description">
   </div>
-  
+
   <ng-container *ngIf="!field.readonly; else readonly">
     <ng-container [ngSwitch]="field.type">      
       <ng-container *ngSwitchCase="FieldType.LongText">
@@ -126,12 +126,16 @@
           </mat-checkbox> 
       </ng-container>
       <ng-container *ngSwitchCase="FieldType.Signature">  
-        <fs-signature
-          name="fieldSignature"
-          [heightRatio]=".4"
-          [(ngModel)]="field.value"
-          (ngModelChange)="change()">
-        </fs-signature>
+        <fs-label-field class="fs-form-wrapper">
+          <fs-signature
+            name="fieldSignature"
+            [required]="field.required"
+            [heightRatio]=".5"
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()">
+          </fs-signature>
+          <fs-label-message class="fs-form-message"></fs-label-message>
+        </fs-label-field>
       </ng-container>
     </ng-container>
   </ng-container>

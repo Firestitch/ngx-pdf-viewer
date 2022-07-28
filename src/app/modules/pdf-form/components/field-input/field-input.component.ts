@@ -7,11 +7,11 @@ import {
 
 import { MatInput } from '@angular/material/input';
 
-import { of, Subject } from 'rxjs';
+import { merge, of, Subject } from 'rxjs';
 import { FieldFormat, FieldType } from '../../enums';
 
 import { FieldService } from '../../services';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { PdfField } from '../../interfaces';
 import { FsFormDirective } from '@firestitch/form';
 
@@ -52,13 +52,64 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   public ngOnInit(): void {
-    this._fieldService.fieldChanged$
+    merge(
+      this._fieldService.field$
+      .pipe(
+        map((field) => ({ field, focus: true }))
+      ),
+      this._fieldService.fieldChanged$
+      .pipe(
+        map((fieldChange) => ({field: fieldChange.field, focus: false }))
+      )
+    )
     .pipe(
       takeUntil(this._destroy$),      
     )
-    .subscribe(() => {
+    .subscribe((data) => {
+      this.field = data.field;
+      this.updateField(data.focus);
       this._cdRef.markForCheck();  
     }); 
+  }
+
+  public updateField(focus: boolean) {
+    this.backField = this._fieldService.getBackField(this.field);
+    this.nextField = this._fieldService.getNextField(this.field);
+    this.description = '';
+    this.label = '';
+
+    if(this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
+      this._fieldService.getFields()
+      .filter((field: PdfField) => (
+        field.type === this.field.type &&
+        field.name === this.field.name
+      ))
+      .forEach((field) => {
+        this.label = field.groupLabel || this.label;
+        this.description = field.groupDescription || this.description;
+      });
+        
+      if(this.field.type === FieldType.RadioButton) {
+        this.radioButtonFields = this._fieldService.getFields()
+          .filter((field: PdfField) => (
+            field.type === FieldType.RadioButton &&
+            field.name === this.field.name
+          ));
+
+        
+        this.radioButtonField = this.radioButtonFields
+        .find((field) => (field.value));
+      } 
+     } else {
+      this.description = this.field.description;
+      this.label = this.field.label;
+     }
+
+    if(focus) {
+      setTimeout(() => {
+        this.focus();
+      }, 50);     
+    }
   }
   
   public inputKeyDown(event: KeyboardEvent): void {
@@ -73,41 +124,7 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
 
   public ngOnChanges(changes: SimpleChanges): void {
     if(changes.field) {
-      this.backField = this._fieldService.getBackField(this.field);
-      this.nextField = this._fieldService.getNextField(this.field);
-      this.description = '';
-      this.label = '';
 
-      if(this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
-        this._fieldService.getFields()
-        .filter((field: PdfField) => (
-          field.type === this.field.type &&
-          field.name === this.field.name
-        ))
-        .forEach((field) => {
-          this.label = field.groupLabel || this.label;
-          this.description = field.groupDescription || this.description;
-        });
-          
-        if(this.field.type === FieldType.RadioButton) {
-          this.radioButtonFields = this._fieldService.getFields()
-            .filter((field: PdfField) => (
-              field.type === FieldType.RadioButton &&
-              field.name === this.field.name
-            ));
-
-          
-          this.radioButtonField = this.radioButtonFields
-          .find((field) => (field.value));
-        } 
-       } else {
-        this.description = this.field.description;
-        this.label = this.field.label;
-       }
-
-      setTimeout(() => {
-        this.focus();
-      }, 50);
     }
   }
 

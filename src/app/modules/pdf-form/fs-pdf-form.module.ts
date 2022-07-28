@@ -26,6 +26,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { FsMenuModule } from '@firestitch/menu';
+import { FsLabelModule } from '@firestitch/label';
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import { FsMenuModule } from '@firestitch/menu';
     FsRadioGroupModule,
     FsMenuModule,
     FsSignatureModule,
+    FsLabelModule,
 
     FsPdfViewerModule, 
   ],
