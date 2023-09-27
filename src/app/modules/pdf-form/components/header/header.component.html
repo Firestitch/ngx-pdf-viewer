@@ -8,18 +8,6 @@
       <ng-container *ngIf="hasStarted">
        <ng-container *ngTemplateOutlet="progress"></ng-container>
       </ng-container>
-      <ng-container *ngIf="!mobile">
-        <ng-container 
-            *ngFor="let action of actions">
-          <button
-            type="button"
-            [color]="action.color"
-            mat-raised-button
-            (click)="action.click()">
-          {{action.label}}
-        </button>
-        </ng-container>
-      </ng-container>
       <ng-container *ngIf="hasStarted">
         <button
             *ngIf="complete < total"
@@ -47,6 +35,18 @@
             (click)="start()">
           {{mobile ? 'Start' : 'Get Started'}}
         </button>
+      </ng-container>
+      <ng-container *ngIf="!mobile">
+        <ng-container 
+            *ngFor="let action of actions">
+          <button
+            type="button"
+            [color]="action.color"
+            mat-raised-button
+            (click)="action.click()">
+          {{action.label}}
+        </button>
+        </ng-container>
       </ng-container>
       <ng-container *ngIf="mobile">
         <fs-menu>

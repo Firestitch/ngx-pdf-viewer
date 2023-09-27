@@ -1,23 +1,22 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule, Routes } from '@angular/router';
 
+import { FsDatePickerModule } from '@firestitch/datepicker';
 import { FsExampleModule } from '@firestitch/example';
 import { FsMessageModule } from '@firestitch/message';
 import { FsPdfViewerModule } from '@firestitch/pdf';
-import { FsDatePickerModule } from '@firestitch/datepicker';
 
-import { ToastrModule } from 'ngx-toastr';
-import { AppMaterialModule } from './material.module';
+import { FsPdfFormModule } from 'src/app/modules/pdf-form/fs-pdf-form.module';
+import { AppComponent } from './app.component';
 import {
   ExamplesComponent,
   FormComponent,
   ViewerComponent,
 } from './components';
-import { AppComponent } from './app.component';
-import { FsPdfFormModule } from 'src/app/modules/pdf-form/fs-pdf-form.module';
+import { AppMaterialModule } from './material.module';
 
 const routes: Routes = [
   { path: '', component: ExamplesComponent },
@@ -25,7 +24,7 @@ const routes: Routes = [
 
 
 @NgModule({
-  bootstrap: [ AppComponent ],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     FsPdfViewerModule,
@@ -36,7 +35,6 @@ const routes: Routes = [
     FsDatePickerModule.forRoot(),
     FsExampleModule.forRoot(),
     FsMessageModule.forRoot(),
-    ToastrModule.forRoot({ preventDuplicates: true }),
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
   ],
   entryComponents: [

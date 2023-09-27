@@ -38,6 +38,12 @@
   }
   
   &.field-checkbox, &.field-radiobutton {
+    justify-content: center;
+
+    fs-field-render {
+      justify-content: center;
+    }
+    
     ::ng-deep {
       img {
         width: 100%;
