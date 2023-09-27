@@ -1,24 +1,26 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
-  OnDestroy,
-  ChangeDetectionStrategy,
-  ElementRef,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 
+import { FsApiFile } from '@firestitch/api';
 import { NgxExtendedPdfViewerComponent, NgxExtendedPdfViewerService, PageRenderedEvent } from 'ngx-extended-pdf-viewer';
-import { from, Observable, Subject } from 'rxjs';
+import { Observable, Subject, from } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { PdfField } from '../../../pdf-form/interfaces';
 
 
 @Component({
   selector: 'fs-pdf-viewer',
   templateUrl: 'pdf-viewer.component.html',
-  styleUrls: [ 'pdf-viewer.component.scss' ],
+  styleUrls: ['pdf-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FsPdfViewerComponent implements OnInit, OnDestroy {
@@ -26,7 +28,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @ViewChild(NgxExtendedPdfViewerComponent)
   public extendedPdfViewer: NgxExtendedPdfViewerComponent;
 
-  @Input() public pdf;
+  @Input() public pdf: string | FsApiFile;
   @Input() public fields: PdfField[] = [];
   @Input() public height;
   @Input() public pageViewMode: 'infinite-scroll' | 'multiple' | 'single' = 'infinite-scroll';
@@ -41,20 +43,18 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
 
   constructor(
     private _ngxService: NgxExtendedPdfViewerService,
-    private _el: ElementRef,
-  ) {};
+    private _cdRef: ChangeDetectorRef,
+  ) { };
 
   public ngOnInit(): void {
-    if(this.pageViewMode === 'infinite-scroll') {
+    if (this.pageViewMode === 'infinite-scroll') {
       this.height = '100px';
     }
 
-    //setTimeout(() => {
-      this.src = this.pdf;
-   // });
+    this._initSrc();
   }
 
-  public pdfLoaded(): void {    
+  public pdfLoaded(): void {
     this.extendedPdfViewer.zoomToPageWidth = () => {
       return Promise.resolve();
     }
@@ -65,7 +65,6 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   }
 
   public pageRenderedd(event) {
-    debugger;
   }
 
   public resize(): void {
@@ -75,5 +74,22 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  private _initSrc() {
+    if (typeof this.pdf === 'string') {
+      this.src = this.pdf;
+    }
+
+    if (this.pdf instanceof FsApiFile) {
+      this.pdf.blob
+        .pipe(
+          takeUntil(this._destroy$),
+        )
+        .subscribe((blob) => {
+          this.src = blob;
+          this._cdRef.markForCheck();
+        });
+    }
   }
 }

@@ -9,6 +9,7 @@ import { FsExampleModule } from '@firestitch/example';
 import { FsMessageModule } from '@firestitch/message';
 import { FsPdfViewerModule } from '@firestitch/pdf';
 
+import { FsApiModule } from '@firestitch/api';
 import { FsPdfFormModule } from 'src/app/modules/pdf-form/fs-pdf-form.module';
 import { AppComponent } from './app.component';
 import {
@@ -29,6 +30,7 @@ const routes: Routes = [
     BrowserModule,
     FsPdfViewerModule,
     FsPdfFormModule,
+    FsApiModule.forRoot(),
     BrowserAnimationsModule,
     AppMaterialModule,
     FormsModule,

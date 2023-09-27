@@ -1,7 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.component';
 
@@ -9,8 +10,10 @@ import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.compone
   imports: [
     CommonModule,
     FormsModule,
-    
-    NgxExtendedPdfViewerModule,   
+
+    MatProgressSpinnerModule,
+
+    NgxExtendedPdfViewerModule,
   ],
   exports: [
     FsPdfViewerComponent,
