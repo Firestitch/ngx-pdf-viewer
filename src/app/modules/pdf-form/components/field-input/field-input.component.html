@@ -22,7 +22,7 @@
             matInput
             [required]="field.required"
             [(ngModel)]="field.value"
-            (ngModelChange)="change()"
+            (ngModelChange)="changeInput()"
             (blur)="blur()"
             (keydown)="inputKeyDown($event)"
             name="fieldInput">
@@ -39,7 +39,7 @@
                 matInput
                 [required]="field.required"
                 [(ngModel)]="field.value"
-                (ngModelChange)="change()"
+                (ngModelChange)="changeInput()"
                 (blur)="blur()"
                 (keydown)="inputKeyDown($event)"
                 [fsMask]="true"
@@ -56,7 +56,7 @@
                 [required]="field.required"
                 [attr.maxLength]="field.maxLength"
                 [(ngModel)]="field.value"
-                (ngModelChange)="change()"              
+                (ngModelChange)="changeInput()"              
                 (blur)="blur()"
                 (keydown)="inputKeyDown($event)"
                 fsMaskNumber
@@ -73,7 +73,7 @@
                 [required]="field.required"
                 [attr.maxLength]="field.maxLength"
                 [(ngModel)]="field.value"
-                (ngModelChange)="change()"                
+                (ngModelChange)="changeInput()"                
                 (blur)="blur()"
                 (keydown)="inputKeyDown($event)"
                 name="shortText">
@@ -90,7 +90,7 @@
             [required]="field.required"
             fsDatePicker
             [(ngModel)]="field.value"
-            (ngModelChange)="change()"
+            (ngModelChange)="changeInput()"
             (blur)="blur()"
             (keydown)="inputKeyDown($event)"
             name="fieldDate">
@@ -118,12 +118,12 @@
       </ng-container>
   
       <ng-container *ngSwitchCase="FieldType.Checkbox">
-          <mat-checkbox
-              name="fieldRadioButton"
-              [(ngModel)]="field.value"
-              (ngModelChange)="change()">
-            {{ field.label }}
-          </mat-checkbox> 
+        <mat-checkbox
+            name="fieldRadioButton"
+            [(ngModel)]="field.value"
+            (ngModelChange)="change()">
+          {{ field.label }}
+        </mat-checkbox> 
       </ng-container>
       <ng-container *ngSwitchCase="FieldType.Signature">  
         <fs-label-field class="fs-form-wrapper">

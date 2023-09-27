@@ -1,6 +1,11 @@
 import {
-  Component, ChangeDetectionStrategy,
-  OnInit, OnDestroy, Inject, ChangeDetectorRef, HostListener,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  Inject,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -12,9 +17,9 @@ import {
 } from 'ngx-extended-pdf-viewer';
 
 import { FieldFormat, FieldType } from '../../enums';
-import { FieldService } from '../../services/field-service';
-import { PdfField } from '../../interfaces';
 import { hasValue } from '../../helpers';
+import { PdfField } from '../../interfaces';
+import { FieldService } from '../../services/field-service';
 
 
 @Component({
@@ -45,31 +50,33 @@ export class FieldComponent implements OnInit, OnDestroy {
     @Inject('scale') public scale: number,
     private _cdRef: ChangeDetectorRef,
     protected _sanitizer: DomSanitizer,
-  ) {}
+  ) { }
 
   public ngOnInit(): void {
     this._fieldService.addField(this._field);
     this._fieldService.field$
-    .pipe(
-      tap(() => {
-        this.selected = false;
+      .pipe(
+        tap(() => {
+          this.selected = false;
+          this._cdRef.markForCheck();
+        }),
+        filter((field: PdfField) => field === this._field),
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this.selected = true;
         this._cdRef.markForCheck();
-      }),
-      filter((field: PdfField) => field === this._field),
-      takeUntil(this._destroy$),
-    )
-    .subscribe(() => {
-      this.selected = true;
-      this._cdRef.markForCheck();
-    });
+      });
 
     this._fieldService.fieldChanged$
-    .pipe(
-      takeUntil(this._destroy$),
-    )
-    .subscribe(() => {
-      this._cdRef.markForCheck();
-    });
+      .pipe(
+        filter((field: PdfField) => field === this._field),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((field) => {
+        this.field = field;
+        this._cdRef.markForCheck();
+      });
   }
 
   public get hasValue(): boolean {
@@ -93,23 +100,7 @@ export class FieldComponent implements OnInit, OnDestroy {
   }
 
   public fieldClick(): void {
-    if(this.field.type === FieldType.Checkbox) {
-      this.field.value = !this.field.value;
 
-    } else if(this.field.type === FieldType.RadioButton) {
-      this.field.value = true;
-      this._fieldService.getFields()
-      .filter((field: PdfField) => (
-        field.type === FieldType.RadioButton &&
-        field.name === this.field.name &&
-        field !== this.field
-      ))
-      .forEach((field: PdfField) => {
-        field.value = false
-      });
-    }
-
-    this._fieldService.changeField = { field: this.field, event: 'change' };
   }
 
   public ngOnDestroy(): void {

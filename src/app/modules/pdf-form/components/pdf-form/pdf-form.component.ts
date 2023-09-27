@@ -17,18 +17,16 @@ import {
 import { MatSidenavContent } from '@angular/material/sidenav';
 
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { FsApiFile } from '@firestitch/api';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
-import { FieldType } from '../../enums';
 import { initFields } from '../../helpers/init-fields';
 import { PdfField } from '../../interfaces';
 import { FieldService } from '../../services';
-import { FieldChange } from '../../types';
 import { FieldInputComponent } from '../field-input/field-input.component';
 import { FieldComponent } from '../field/field.component';
 
@@ -55,9 +53,9 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public name;
   @Input() public fields: PdfField[] = [];
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
-  @Input() public fieldUpdateOn: 'blur' | 'change' = 'change';
 
   @Output() public fieldChanged = new EventEmitter<PdfField>();
+  @Output() public fieldBlurred = new EventEmitter<PdfField>();
   @Output() public closed = new EventEmitter();
   @Output() public finished = new EventEmitter();
   @Output() public started = new EventEmitter();
@@ -95,26 +93,10 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
     this._fieldService.fieldChanged$
       .pipe(
-        filter((fieldChange: FieldChange): boolean => {
-          if (this.fieldUpdateOn === 'blur') {
-            switch (fieldChange.field.type) {
-              case FieldType.Checkbox:
-              case FieldType.RadioButton:
-              case FieldType.Date:
-              case FieldType.Signature:
-                return true;
-
-              default:
-                return fieldChange.event === 'blur';
-            }
-          }
-
-          return true;
-        }),
         takeUntil(this._destroy$),
       )
-      .subscribe((fieldChange: FieldChange) => {
-        this.fieldChanged.next(fieldChange.field);
+      .subscribe((field: PdfField) => {
+        this.fieldChanged.next(field);
       });
 
     this._fieldService.finished$

@@ -1,8 +1,13 @@
 import {
-  Component, ChangeDetectionStrategy,
-  OnInit, ElementRef, OnDestroy, ChangeDetectorRef, 
-  Input, ViewChild, OnChanges, SimpleChanges, Output, 
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
 } from '@angular/core';
 
 import { MatInput } from '@angular/material/input';
@@ -10,10 +15,10 @@ import { MatInput } from '@angular/material/input';
 import { merge, of, Subject } from 'rxjs';
 import { FieldFormat, FieldType } from '../../enums';
 
-import { FieldService } from '../../services';
-import { map, takeUntil } from 'rxjs/operators';
-import { PdfField } from '../../interfaces';
 import { FsFormDirective } from '@firestitch/form';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { PdfField } from '../../interfaces';
+import { FieldService } from '../../services';
 
 
 @Component({
@@ -22,11 +27,11 @@ import { FsFormDirective } from '@firestitch/form';
   styleUrls: ['./field-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
+export class FieldInputComponent implements OnInit, OnDestroy {
 
   @ViewChild('input', { read: MatInput })
   public input: MatInput;
-  
+
   @ViewChild(FsFormDirective)
   public form: FsFormDirective;
 
@@ -44,32 +49,41 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   public label;
 
   private _destroy$ = new Subject();
+  private _inputChange$ = new Subject();
 
   constructor(
-    private _el: ElementRef,
     private _fieldService: FieldService,
     private _cdRef: ChangeDetectorRef,
-  ) {}
+  ) { }
+
+  public changeInput(): void {
+    this._inputChange$.next(this.field.value);
+  }
 
   public ngOnInit(): void {
+    this._inputChange$
+      .pipe(
+        debounceTime(500),
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this.change();
+      });
+
     merge(
       this._fieldService.field$
+        .pipe(
+          map((field) => ({ field, focus: true }))
+        ),
+    )
       .pipe(
-        map((field) => ({ field, focus: true }))
-      ),
-      this._fieldService.fieldChanged$
-      .pipe(
-        map((fieldChange) => ({field: fieldChange.field, focus: false }))
+        takeUntil(this._destroy$),
       )
-    )
-    .pipe(
-      takeUntil(this._destroy$),      
-    )
-    .subscribe((data) => {
-      this.field = data.field;
-      this.updateField(data.focus);
-      this._cdRef.markForCheck();  
-    }); 
+      .subscribe((data) => {
+        this.field = data.field;
+        this.updateField(data.focus);
+        this._cdRef.markForCheck();
+      });
   }
 
   public updateField(focus: boolean) {
@@ -78,43 +92,43 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     this.description = '';
     this.label = '';
 
-    if(this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
+    if (this.field.type === FieldType.RadioButton || this.field.type === FieldType.Checkbox) {
       this._fieldService.getFields()
-      .filter((field: PdfField) => (
-        field.type === this.field.type &&
-        field.name === this.field.name
-      ))
-      .forEach((field) => {
-        this.label = field.groupLabel || this.label;
-        this.description = field.groupDescription || this.description;
-      });
-        
-      if(this.field.type === FieldType.RadioButton) {
+        .filter((field: PdfField) => (
+          field.type === this.field.type &&
+          field.name === this.field.name
+        ))
+        .forEach((field) => {
+          this.label = field.groupLabel || this.label;
+          this.description = field.groupDescription || this.description;
+        });
+
+      if (this.field.type === FieldType.RadioButton) {
         this.radioButtonFields = this._fieldService.getFields()
           .filter((field: PdfField) => (
             field.type === FieldType.RadioButton &&
             field.name === this.field.name
           ));
 
-        
+
         this.radioButtonField = this.radioButtonFields
-        .find((field) => (field.value));
-      } 
-     } else {
+          .find((field) => (field.value));
+      }
+    } else {
       this.description = this.field.description;
       this.label = this.field.label;
-     }
+    }
 
-    if(focus) {
+    if (focus) {
       setTimeout(() => {
         this.focus();
-      }, 50);     
+      }, 50);
     }
   }
-  
+
   public inputKeyDown(event: KeyboardEvent): void {
-    if(event.code === 'Tab') {
-      if(event.shiftKey) {
+    if (event.code === 'Tab') {
+      if (event.shiftKey) {
         this.back();
       } else {
         this.form.triggerSubmit();
@@ -122,33 +136,27 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  public ngOnChanges(changes: SimpleChanges): void {
-    if(changes.field) {
-
-    }
-  }
-
   public radioButtonFieldChange(selectedField: PdfField): void {
-    if(selectedField) {
+    if (selectedField) {
       this._fieldService.getFields()
-      .filter((field: PdfField) => (
-        field.type === FieldType.RadioButton &&
-        field.name === this.field.name 
-      ))
-      .forEach((field: PdfField) => {
-        field.value = field === selectedField;
-      });
+        .filter((field: PdfField) => (
+          field.type === FieldType.RadioButton &&
+          field.name === this.field.name
+        ))
+        .forEach((field: PdfField) => {
+          field.value = field === selectedField;
+        });
 
-      this._fieldService.changeField = { field: selectedField, event: 'change' };
+      this._fieldService.changeField = selectedField;
     } else {
       this._fieldService.getFields()
-      .filter((field: PdfField) => (
-        field.type === FieldType.RadioButton && field.value
-      ))
-      .forEach((field: PdfField) => {
-        field.value = false;        
-        this._fieldService.changeField = { field, event: 'change' };
-      });
+        .filter((field: PdfField) => (
+          field.type === FieldType.RadioButton && field.value
+        ))
+        .forEach((field: PdfField) => {
+          field.value = false;
+          this._fieldService.changeField = field;
+        });
     }
   }
 
@@ -158,15 +166,15 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public change(): void {
-    this._fieldService.changeField = { field: this.field, event: 'change' };
+    this._fieldService.changeField = this.field;
   }
 
   public blur(): void {
-    this._fieldService.changeField = { field: this.field, event: 'blur' };
+    this._fieldService.blurField = this.field;
   }
 
   public focus(): void {
-    if(this.input) {
+    if (this.input) {
       this.input.focus();
     }
   }
@@ -176,11 +184,11 @@ export class FieldInputComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public back() {
-    if(this.backField) {
+    if (this.backField) {
       this._fieldService.selectField = this.backField;
     }
   }
-  
+
   public submit = () => {
     this._fieldService.continue();
     this._fieldService.scrollToSelectedField();

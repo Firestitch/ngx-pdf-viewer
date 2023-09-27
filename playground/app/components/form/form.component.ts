@@ -77,4 +77,8 @@ export class FormComponent implements OnInit {
     console.log('Field Changed', event);
   }
 
+  public fieldBlurred(event): void {
+    console.log('Field blurred', event);
+  }
+
 }
