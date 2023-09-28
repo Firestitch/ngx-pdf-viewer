@@ -4,15 +4,11 @@
   </ng-container>
 
   <ng-container *ngSwitchCase="FieldType.RadioButton">
-    <div (click)="radiobuttonClick()" class="radiobutton">
-      <ng-container *ngTemplateOutlet="checkmark"></ng-container>
-    </div>
+    <ng-container *ngTemplateOutlet="checkmark"></ng-container>
   </ng-container>
 
   <ng-container *ngSwitchCase="FieldType.Checkbox">
-    <div (click)="checkboxClick()" class="checkbox">
-      <ng-container *ngTemplateOutlet="checkmark"></ng-container>
-    </div>
+    <ng-container *ngTemplateOutlet="checkmark"></ng-container>
   </ng-container>
 
   <ng-container *ngSwitchCase="FieldType.Signature">  

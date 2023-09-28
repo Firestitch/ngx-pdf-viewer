@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  HostListener,
   Inject,
   OnDestroy,
-  OnInit,
+  OnInit
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -29,11 +28,6 @@ import { FieldService } from '../../services/field-service';
   providers: [NgxExtendedPdfViewerService],
 })
 export class FieldComponent implements OnInit, OnDestroy {
-
-  @HostListener('click')
-  public click(): void {
-    this.select();
-  }
 
   public selected = false;
   public FieldType = FieldType;
@@ -81,10 +75,6 @@ export class FieldComponent implements OnInit, OnDestroy {
 
   public get hasValue(): boolean {
     return hasValue(this.field)
-  }
-
-  public select(): void {
-    this._fieldService.selectField = this._field;
   }
 
   public get field(): PdfField {

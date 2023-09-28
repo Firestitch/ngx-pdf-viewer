@@ -5,6 +5,7 @@
     [class]="'field-' + field.type"
     [ngClass]="{
       selected: selected,
+      readonly: field.readonly,
       currency: field.format === FieldFormat.Currency,
       'has-value': hasValue,
       required: field.required

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -28,6 +29,11 @@ import { FieldService } from '../../services/field-service';
   providers: [NgxExtendedPdfViewerService],
 })
 export class FieldRenderComponent implements OnInit, OnDestroy {
+
+  @HostListener('click')
+  public click(): void {
+    this.select();
+  }
 
   @Input() public field: PdfField;
   @Input() public optionValue;
@@ -63,25 +69,31 @@ export class FieldRenderComponent implements OnInit, OnDestroy {
     return this.field.value;
   }
 
-  public checkboxClick() {
-    this.field.value = !this.field.value;
-    this._fieldService.changeField = this.field;
-  }
+  public select(): void {
+    if (this.field.readonly) {
+      return;
+    }
 
-  public radiobuttonClick() {
-    this.field.value = true;
-    this._fieldService.getFields()
-      .filter((field: PdfField) => (
-        field.type === FieldType.RadioButton &&
-        field.name === this.field.name &&
-        field !== this.field
-      ))
-      .forEach((field: PdfField) => {
-        field.value = false;
-        this._fieldService.changeField = field;
-      });
+    if (this.field.type === FieldType.RadioButton) {
+      this.field.value = true;
+      this._fieldService.getFields()
+        .filter((field: PdfField) => (
+          field.type === FieldType.RadioButton &&
+          field.name === this.field.name &&
+          field !== this.field
+        ))
+        .forEach((field: PdfField) => {
+          field.value = false;
+          this._fieldService.changeField = field;
+        });
 
-    this._fieldService.changeField = this.field;
+      this._fieldService.changeField = this.field;
+    } else if (this.field.type === FieldType.Checkbox) {
+      this.field.value = !this.field.value;
+      this._fieldService.changeField = this.field;
+    }
+
+    this._fieldService.selectField = this.field;
   }
 
   public ngOnDestroy(): void {

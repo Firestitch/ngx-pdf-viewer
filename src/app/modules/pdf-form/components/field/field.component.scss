@@ -68,7 +68,7 @@
     position: absolute;
   }
 
-  &:hover,
+  &:hover:not(.readonly),
   &.selected {
     .border {
       border-color: #323232;
