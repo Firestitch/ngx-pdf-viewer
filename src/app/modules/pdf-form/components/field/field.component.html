@@ -3,7 +3,6 @@
     [tabindex]="-1"
     [attr.data-guid]="field.guid"
     [class]="'field-' + field.type"
-    (click)="fieldClick()"
     [ngClass]="{
       selected: selected,
       currency: field.format === FieldFormat.Currency,
@@ -15,4 +14,5 @@
     [field]="field"
     [optionValue]="optionValue">
   </fs-field-render>
+  <div class="border"></div>
 </div>

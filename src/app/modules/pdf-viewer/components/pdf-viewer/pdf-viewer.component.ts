@@ -28,7 +28,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @ViewChild(NgxExtendedPdfViewerComponent)
   public extendedPdfViewer: NgxExtendedPdfViewerComponent;
 
-  @Input() public pdf: string | FsApiFile;
+  @Input() public pdf: string | FsApiFile | ArrayBuffer | Blob | Uint8Array | URL;
   @Input() public fields: PdfField[] = [];
   @Input() public height;
   @Input() public pageViewMode: 'infinite-scroll' | 'multiple' | 'single' = 'infinite-scroll';
@@ -77,10 +77,6 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   }
 
   private _initSrc() {
-    if (typeof this.pdf === 'string') {
-      this.src = this.pdf;
-    }
-
     if (this.pdf instanceof FsApiFile) {
       this.pdf.blob
         .pipe(
@@ -90,6 +86,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
           this.src = blob;
           this._cdRef.markForCheck();
         });
+    } else {
+      this.src = this.pdf;
     }
   }
 }
