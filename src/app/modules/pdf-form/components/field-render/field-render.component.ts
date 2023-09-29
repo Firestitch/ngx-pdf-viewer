@@ -1,11 +1,8 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  HostListener,
   Input,
-  OnDestroy,
-  OnInit,
+  OnDestroy
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -14,11 +11,9 @@ import {
 } from 'ngx-extended-pdf-viewer';
 
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
 
 import { FieldFormat, FieldType } from '../../enums';
 import { PdfField } from '../../interfaces';
-import { FieldService } from '../../services/field-service';
 
 
 @Component({
@@ -28,12 +23,7 @@ import { FieldService } from '../../services/field-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [NgxExtendedPdfViewerService],
 })
-export class FieldRenderComponent implements OnInit, OnDestroy {
-
-  @HostListener('click')
-  public click(): void {
-    this.select();
-  }
+export class FieldRenderComponent implements OnDestroy {
 
   @Input() public field: PdfField;
   @Input() public optionValue;
@@ -45,21 +35,7 @@ export class FieldRenderComponent implements OnInit, OnDestroy {
 
   constructor(
     private _sanitizer: DomSanitizer,
-    private _fieldService: FieldService,
-    private _cdRef: ChangeDetectorRef,
   ) { }
-
-  public ngOnInit(): void {
-    this._fieldService.fieldChanged$
-      .pipe(
-        filter((field: PdfField) => field === this.field),
-        takeUntil(this._destroy$),
-      )
-      .subscribe((field) => {
-        this.field = field;
-        this._cdRef.markForCheck();
-      });
-  }
 
   public get signatureSvg() {
     if (String(this.field.value).match(/^</)) {
@@ -67,33 +43,6 @@ export class FieldRenderComponent implements OnInit, OnDestroy {
     }
 
     return this.field.value;
-  }
-
-  public select(): void {
-    if (this.field.readonly) {
-      return;
-    }
-
-    if (this.field.type === FieldType.RadioButton) {
-      this.field.value = true;
-      this._fieldService.getFields()
-        .filter((field: PdfField) => (
-          field.type === FieldType.RadioButton &&
-          field.name === this.field.name &&
-          field !== this.field
-        ))
-        .forEach((field: PdfField) => {
-          field.value = false;
-          this._fieldService.changeField = field;
-        });
-
-      this._fieldService.changeField = this.field;
-    } else if (this.field.type === FieldType.Checkbox) {
-      this.field.value = !this.field.value;
-      this._fieldService.changeField = this.field;
-    }
-
-    this._fieldService.selectField = this.field;
   }
 
   public ngOnDestroy(): void {

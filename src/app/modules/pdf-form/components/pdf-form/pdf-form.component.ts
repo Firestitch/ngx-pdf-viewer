@@ -17,13 +17,14 @@ import {
 import { MatSidenavContent } from '@angular/material/sidenav';
 
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 
 import { FsApiFile } from '@firestitch/api';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
+import { FieldType } from '../../enums';
 import { initFields } from '../../helpers/init-fields';
 import { PdfField } from '../../interfaces';
 import { FieldService } from '../../services';
@@ -81,7 +82,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this._fieldService.containerEl = this.sidenavContent.getElementRef().nativeElement;
-    this._fieldService.field$
+    this._fieldService.fieldSelected$
       .pipe(
         takeUntil(this._destroy$),
       )
@@ -93,6 +94,17 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
     this._fieldService.fieldChanged$
       .pipe(
+        filter((field) => !(field.type === FieldType.RadioButton || field.type === FieldType.Checkbox)),
+        debounceTime(500),
+        takeUntil(this._destroy$),
+      )
+      .subscribe((field: PdfField) => {
+        this.fieldChanged.next(field);
+      });
+
+    this._fieldService.fieldChanged$
+      .pipe(
+        filter((field) => field.type === FieldType.RadioButton || field.type === FieldType.Checkbox),
         takeUntil(this._destroy$),
       )
       .subscribe((field: PdfField) => {
@@ -143,6 +155,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
       .reduce(initFields, [])
       .sort((a, b) => a.tabIndex - b.tabIndex)
       .forEach((field: any) => {
+        this._fieldService.addField(field);
         const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
         this.createComponent(field, fieldEl, null, scale);
       });
@@ -172,7 +185,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
         },
         {
           provide: 'field',
-          useValue: field,
+          useValue: { ...field },
         },
         {
           provide: 'optionValue',

@@ -15,7 +15,7 @@ export class FieldService implements OnDestroy {
   public fieldComponents = new Set<PdfField>();
   public containerEl;
 
-  private _field$ = new BehaviorSubject<PdfField>(null);
+  private _fieldSelected$ = new BehaviorSubject<PdfField>(null);
   private _fieldChanged$ = new Subject<PdfField>();
   private _fieldBlurred$ = new Subject<PdfField>();
   private _finished$ = new Subject<any>();
@@ -33,8 +33,8 @@ export class FieldService implements OnDestroy {
     this.fieldComponents.delete(field);
   }
 
-  public get field$(): BehaviorSubject<PdfField> {
-    return this._field$;
+  public get fieldSelected$(): BehaviorSubject<PdfField> {
+    return this._fieldSelected$;
   }
 
   public get fieldChanged$(): Subject<PdfField> {
@@ -49,16 +49,33 @@ export class FieldService implements OnDestroy {
     return this._finished$;
   }
 
-  public get field() {
-    return this._field$.getValue();
+  public get fieldSelected() {
+    return this._fieldSelected$.getValue();
   }
 
   public set selectField(field: PdfField) {
-    this._field$.next(field);
+    this._fieldSelected$.next(field);
   }
 
   public set blurField(pdfField: PdfField) {
     this.fieldBlurred$.next(pdfField);
+  }
+
+  public checkRadioButtonField(name: string, pdfField: PdfField) {
+    this.getFields()
+      .filter((field: PdfField) => (
+        field.type === FieldType.RadioButton &&
+        field.name === name
+      ))
+      .forEach((field: PdfField) => {
+        field.value = field.guid === pdfField?.guid;
+        this.changeField = field;
+      });
+  }
+
+  public checkCheckboxField(pdfField: PdfField, value) {
+    pdfField.value = value;
+    this.changeField = pdfField;
   }
 
   public set changeField(pdfField: PdfField) {
@@ -99,7 +116,7 @@ export class FieldService implements OnDestroy {
   }
 
   public continue(): void {
-    const nextField = this.getNextField(this.field);
+    const nextField = this.getNextField(this.fieldSelected);
     if (nextField) {
       this.selectField = nextField;
     } else {
@@ -190,8 +207,8 @@ export class FieldService implements OnDestroy {
   }
 
   public scrollToSelectedField(): void {
-    if (this.field) {
-      this.scrollToField(this.field);
+    if (this.fieldSelected) {
+      this.scrollToField(this.fieldSelected);
     }
   }
 

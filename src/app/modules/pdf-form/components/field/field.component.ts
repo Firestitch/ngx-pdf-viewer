@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  HostListener,
   Inject,
   OnDestroy,
   OnInit
@@ -29,10 +30,14 @@ import { FieldService } from '../../services/field-service';
 })
 export class FieldComponent implements OnInit, OnDestroy {
 
+  @HostListener('click')
+  public click(): void {
+    this.select();
+  }
+
   public selected = false;
   public FieldType = FieldType;
   public FieldFormat = FieldFormat;
-
   public fontScaleThreshold = 9;
 
   private _destroy$ = new Subject();
@@ -47,14 +52,13 @@ export class FieldComponent implements OnInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    this._fieldService.addField(this._field);
-    this._fieldService.field$
+    this._fieldService.fieldSelected$
       .pipe(
         tap(() => {
           this.selected = false;
           this._cdRef.markForCheck();
         }),
-        filter((field: PdfField) => field === this._field),
+        filter((field: PdfField) => field?.guid === this._field?.guid),
         takeUntil(this._destroy$),
       )
       .subscribe(() => {
@@ -64,17 +68,33 @@ export class FieldComponent implements OnInit, OnDestroy {
 
     this._fieldService.fieldChanged$
       .pipe(
-        filter((field: PdfField) => field === this._field),
+        filter((field: PdfField) => field.guid === this._field.guid),
         takeUntil(this._destroy$),
       )
       .subscribe((field) => {
-        this.field = field;
+        this.field = { ...field };
         this._cdRef.markForCheck();
       });
   }
 
   public get hasValue(): boolean {
     return hasValue(this.field)
+  }
+
+  public select(): void {
+    if (this.field.readonly) {
+      return;
+    }
+
+    if (this.field.type === FieldType.RadioButton) {
+      this._fieldService.checkRadioButtonField(this.field.name, this.field);
+    }
+
+    if (this.field.type === FieldType.Checkbox) {
+      this._fieldService.checkCheckboxField(this.field, !this.field.value);
+    }
+
+    this._fieldService.selectField = this.field;
   }
 
   public get field(): PdfField {

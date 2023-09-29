@@ -99,11 +99,11 @@
   
       <ng-container *ngSwitchCase="FieldType.RadioButton">
         <fs-radio-group
-            [(ngModel)]="radioButtonField"
-            name="fieldRadioButton"
-            [required]="field.required"
-            orientation="vertical"
-            (ngModelChange)="radioButtonFieldChange($event)">
+              [(ngModel)]="radioButtonField"
+              name="fieldRadioButton"
+              [required]="field.required"
+              orientation="vertical"
+              (ngModelChange)="checkRadioButtonField(field.name, $event)">
             <mat-radio-button
                 *ngIf="!field.required"
                 [value]="null">
@@ -121,7 +121,7 @@
         <mat-checkbox
             name="fieldRadioButton"
             [(ngModel)]="field.value"
-            (ngModelChange)="change()">
+            (ngModelChange)="checkCheckboxField(field, $event)">
           {{ field.label }}
         </mat-checkbox> 
       </ng-container>

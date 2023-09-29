@@ -12,11 +12,11 @@ import {
 
 import { MatInput } from '@angular/material/input';
 
-import { merge, of, Subject } from 'rxjs';
+import { merge, Observable, of, Subject } from 'rxjs';
 import { FieldFormat, FieldType } from '../../enums';
 
 import { FsFormDirective } from '@firestitch/form';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { PdfField } from '../../interfaces';
 import { FieldService } from '../../services';
 
@@ -36,6 +36,7 @@ export class FieldInputComponent implements OnInit, OnDestroy {
   public form: FsFormDirective;
 
   @Input() public field: PdfField;
+  @Input() public defaultVaidation: (field: PdfField) => Observable<any>;
 
   @Output() public closed = new EventEmitter<any>();
 
@@ -43,8 +44,8 @@ export class FieldInputComponent implements OnInit, OnDestroy {
   public FieldFormat = FieldFormat;
   public nextField: PdfField;
   public backField: PdfField;
-  public radioButtonField = null;
-  public radioButtonFields = [];
+  public radioButtonField: PdfField = null;
+  public radioButtonFields: PdfField[] = [];
   public description;
   public label;
 
@@ -63,7 +64,7 @@ export class FieldInputComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this._inputChange$
       .pipe(
-        debounceTime(500),
+        //debounceTime(500),
         takeUntil(this._destroy$),
       )
       .subscribe(() => {
@@ -71,7 +72,7 @@ export class FieldInputComponent implements OnInit, OnDestroy {
       });
 
     merge(
-      this._fieldService.field$
+      this._fieldService.fieldSelected$
         .pipe(
           map((field) => ({ field, focus: true }))
         ),
@@ -110,7 +111,6 @@ export class FieldInputComponent implements OnInit, OnDestroy {
             field.name === this.field.name
           ));
 
-
         this.radioButtonField = this.radioButtonFields
           .find((field) => (field.value));
       }
@@ -136,28 +136,12 @@ export class FieldInputComponent implements OnInit, OnDestroy {
     }
   }
 
-  public radioButtonFieldChange(selectedField: PdfField): void {
-    if (selectedField) {
-      this._fieldService.getFields()
-        .filter((field: PdfField) => (
-          field.type === FieldType.RadioButton &&
-          field.name === this.field.name
-        ))
-        .forEach((field: PdfField) => {
-          field.value = field === selectedField;
-        });
+  public checkRadioButtonField(name: string, field: PdfField): void {
+    this._fieldService.checkRadioButtonField(name, field);
+  }
 
-      this._fieldService.changeField = selectedField;
-    } else {
-      this._fieldService.getFields()
-        .filter((field: PdfField) => (
-          field.type === FieldType.RadioButton && field.value
-        ))
-        .forEach((field: PdfField) => {
-          field.value = false;
-          this._fieldService.changeField = field;
-        });
-    }
+  public checkCheckboxField(field: PdfField, value): void {
+    this._fieldService.checkCheckboxField(field, value);
   }
 
   public ngOnDestroy(): void {
