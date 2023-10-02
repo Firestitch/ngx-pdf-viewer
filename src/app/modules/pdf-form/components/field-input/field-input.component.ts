@@ -64,7 +64,6 @@ export class FieldInputComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this._inputChange$
       .pipe(
-        //debounceTime(500),
         takeUntil(this._destroy$),
       )
       .subscribe(() => {

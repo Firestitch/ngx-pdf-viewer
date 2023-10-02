@@ -25,7 +25,6 @@ import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
 import { FsPdfViewerComponent } from '../../../pdf-viewer/components/pdf-viewer';
 import { FieldType } from '../../enums';
-import { initFields } from '../../helpers/init-fields';
 import { PdfField } from '../../interfaces';
 import { FieldService } from '../../services';
 import { FieldInputComponent } from '../field-input/field-input.component';
@@ -81,6 +80,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
+    this._fieldService.init(this.fields);
     this._fieldService.containerEl = this.sidenavContent.getElementRef().nativeElement;
     this._fieldService.fieldSelected$
       .pipe(
@@ -150,12 +150,10 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
 
     page.append(fieldContainerEl);
 
-    this.fields
+    this.getFields()
       .filter((field) => field.pageNumber === event.pageNumber)
-      .reduce(initFields, [])
       .sort((a, b) => a.tabIndex - b.tabIndex)
       .forEach((field: any) => {
-        this._fieldService.addField(field);
         const fieldEl = this.createElement(page, scale, field.top, field.left, field.width, field.height);
         this.createComponent(field, fieldEl, null, scale);
       });

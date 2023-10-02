@@ -1,25 +1,24 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Output,
+  Component,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { FieldService } from '../../services';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { FieldService } from '../../services';
 
 
 @Component({
   selector: 'fs-header',
   templateUrl: 'header.component.html',
-  styleUrls: [ 'header.component.scss' ],
+  styleUrls: ['header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit, OnDestroy {
@@ -28,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
   @Input() public closed: EventEmitter<any>;
   @Input() public started: EventEmitter<any>;
-  
+
   public hasStarted;
   public complete = 0;
   public zoom = 100;
@@ -42,49 +41,49 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private _cdRef: ChangeDetectorRef,
     private _fieldService: FieldService,
     private _breakpointObserver: BreakpointObserver,
-  ) {}
+  ) { }
 
-  public ngOnInit(): void {  
+  public ngOnInit(): void {
     this._breakpointObserver.observe('(max-width: 699px)')
-    .pipe(
-      takeUntil(this._destroy$),
-    )
-    .subscribe((breakpointState: BreakpointState) => {
-      this.mobile = breakpointState.matches;
-      this._cdRef.markForCheck();
-    });    
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe((breakpointState: BreakpointState) => {
+        this.mobile = breakpointState.matches;
+        this._cdRef.markForCheck();
+      });
 
     this._fieldService.fieldChanged$
-    .pipe(
-      takeUntil(this._destroy$),
-    )
-    .subscribe(() => {
-      this.updateProgress();
-      this._cdRef.markForCheck();
-    });
+      .pipe(
+        takeUntil(this._destroy$),
+      )
+      .subscribe(() => {
+        this.updateProgress();
+        this._cdRef.markForCheck();
+      });
   }
-  
+
   public continue(): void {
     this._fieldService.continue();
     this._fieldService.scrollToSelectedField();
   }
-  
+
   public updateProgress(): void {
     this.total = this._fieldService.totalRequired;
-    this.complete = this._fieldService.totalRequiredCompleted; 
-    this.completePercent = Math.round((this.complete/this.total) * 100) || 0;
+    this.complete = this._fieldService.completedGroupFields.length;
+    this.completePercent = Math.round((this.complete / this.total) * 100) || 0;
   }
-  
+
   public start(): void {
     this.hasStarted = true;
     this.updateProgress();
     this.started.emit();
   }
-  
+
   public finish(): void {
     this._fieldService.finish();
   }
-  
+
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();

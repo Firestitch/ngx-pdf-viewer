@@ -1,2 +1,3 @@
-export * from './init-field';
 export * from './has-value';
+export * from './init-field';
+

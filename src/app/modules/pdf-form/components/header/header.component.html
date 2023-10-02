@@ -64,7 +64,9 @@
 
 <ng-template #progress>
   <div class="progress">
-    {{complete}} of {{total}} Required
-    <div class="percent">{{completePercent}}% Complete</div> 
+    <ng-container *ngIf="total">
+      {{complete}} of {{total}}
+      <div class="percent">{{completePercent}}% Complete</div> 
+    </ng-container>
   </div>
 </ng-template>

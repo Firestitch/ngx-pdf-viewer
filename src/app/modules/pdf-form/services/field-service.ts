@@ -5,16 +5,17 @@ import { FsPrompt } from '@firestitch/prompt';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { FieldType } from '../enums';
-import { hasValue } from '../helpers';
-import { PdfField } from '../interfaces';
+import { hasValue, initField } from '../helpers';
+import { GroupField, PdfField } from '../interfaces';
 
 
 @Injectable()
 export class FieldService implements OnDestroy {
 
-  public fieldComponents = new Set<PdfField>();
   public containerEl;
 
+  private _pdfFieldSet = new Set<PdfField>();
+  private _groupedFields: GroupField[] = [];
   private _fieldSelected$ = new BehaviorSubject<PdfField>(null);
   private _fieldChanged$ = new Subject<PdfField>();
   private _fieldBlurred$ = new Subject<PdfField>();
@@ -25,12 +26,27 @@ export class FieldService implements OnDestroy {
     private _prompt: FsPrompt,
   ) { }
 
+  public init(fields: PdfField[]) {
+    fields
+      .filter((field) => {
+        return Object.values<string>(FieldType).includes(field.type);
+      })
+      .map((field) => {
+        return initField(field);
+      })
+      .forEach((field) => {
+        this.addField(field);
+      });
+
+    this._groupFields(this.getFields());
+  }
+
   public addField(field: PdfField) {
-    this.fieldComponents.add(field);
+    this._pdfFieldSet.add(field);
   }
 
   public removeField(field: PdfField) {
-    this.fieldComponents.delete(field);
+    this._pdfFieldSet.delete(field);
   }
 
   public get fieldSelected$(): BehaviorSubject<PdfField> {
@@ -96,23 +112,80 @@ export class FieldService implements OnDestroy {
         }
       });
 
+    const groupField = this.groupedField(pdfField.name);
+    if (groupField.type === FieldType.Checkbox) {
+      groupField.value = (groupField.value || [])
+        .filter((value) => value === pdfField.guid);
+
+      if (pdfField.value) {
+        groupField.value.push(pdfField.guid);
+      }
+    } else if (groupField.type === FieldType.RadioButton) {
+      groupField.value = pdfField.guid;
+
+    } else {
+      groupField.value = pdfField.value;
+    }
+
     this._fieldChanged$.next(pdfField);
   }
 
-  public get totalRequiredCompleted(): number {
-    return this.getFields()
-      .filter((field) => field.required && field.value)
-      .length;
+  public get completedGroupFields(): GroupField[] {
+    return Object.values(this.groupedFields)
+      .filter((field) => {
+        return field.type === FieldType.Checkbox ? (field.value || []).length : !!field.value;
+      });
+  }
+
+  public get groupedFields(): GroupField[] {
+    return this._groupedFields;
+  }
+
+  public groupedField(name): GroupField {
+    return this._groupedFields
+      .find((groupedField) => groupedField.name === name);
+  }
+
+  private _groupFields(fields): void {
+    fields
+      .forEach((field: PdfField) => {
+        const name = field.name || field.guid;
+        let groupField = this._groupedFields.find((groupField) => groupField.name === field.name);
+
+        if (!groupField) {
+          groupField = {
+            name,
+            type: field.type,
+            value: null,
+          };
+          this._groupedFields.push(groupField);
+        }
+
+        if (field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
+          groupField.values = [
+            ...(groupField.values || []),
+            field.guid,
+          ];
+        }
+
+        groupField.required = field.required ?? groupField.required ?? false;
+        groupField.readonly = field.readonly ?? groupField.readonly ?? false;
+      });
   }
 
   public get totalRequired(): number {
-    return this.getFields()
+    return Object.values(this.groupedFields)
       .filter((field) => field.required)
       .length;
   }
 
+  public get requiredGroupedFields(): GroupField[] {
+    return Object.values(this.groupedFields)
+      .filter((field) => field.required);
+  }
+
   public getFields(): PdfField[] {
-    return Array.from(this.fieldComponents.keys());
+    return Array.from(this._pdfFieldSet.keys());
   }
 
   public continue(): void {
@@ -120,14 +193,7 @@ export class FieldService implements OnDestroy {
     if (nextField) {
       this.selectField = nextField;
     } else {
-      const field = this.getFields()
-        .find((field) => !!field.required && !hasValue(field));
-
-      if (field) {
-        this.selectField = field;
-      } else {
-        this.finish();
-      }
+      this.finish();
     }
   }
 
@@ -156,12 +222,31 @@ export class FieldService implements OnDestroy {
   }
 
   public getNextField(field: PdfField): PdfField {
-    if (field.type === FieldType.RadioButton) {
-      return this.getGroupedRadioButtonFieldSibling(field, 1);
+    const groupIndex = this.groupedFields
+      .findIndex((groupField) => field.name === groupField.name);
+
+    const groupedFields = groupIndex > 0 ?
+      this.groupedFields : [
+        ...this.groupedFields.slice(groupIndex),
+        ...this.groupedFields.slice(0, groupIndex),
+      ];
+
+    const nextGroupIndex = groupedFields
+      .findIndex((groupField) => {
+        return !hasValue(groupField);
+      });
+
+
+    const nextGroupField = this.groupedFields[nextGroupIndex];
+
+    if (!nextGroupField) {
+      return null;
     }
 
-    const index = this.getFieldIndex(field);
-    return index === -1 ? null : this.getFields()[index + 1];
+    return this.getFields()
+      .find((field) => {
+        return field.name === nextGroupField.name;
+      });
   }
 
   public getBackField(field: PdfField): PdfField {
@@ -173,17 +258,6 @@ export class FieldService implements OnDestroy {
   public getFirstField(): PdfField {
     const fields = this.getFields();
     return fields[0];
-  }
-
-  public getGroupedRadioButtonFieldSibling(field: PdfField, position: number): PdfField {
-    const fields: PdfField[] = this.getGroupedRadioButtonFields();
-
-    const index = fields
-      .findIndex((itemField: PdfField) => {
-        return field.name === itemField.name;
-      });
-
-    return index === -1 ? null : fields[index + position];
   }
 
   public getGroupedRadioButtonFields(): PdfField[] {

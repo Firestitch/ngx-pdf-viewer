@@ -2,7 +2,7 @@
   "name": "@firestitch/pdf",
   "title": "PDF",
   "description": "@firestitch/ngx-pdf",
-  "version": "12.2.11",
+  "version": "12.2.12",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-pdf"
