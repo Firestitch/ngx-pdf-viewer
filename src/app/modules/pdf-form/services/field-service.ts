@@ -221,56 +221,58 @@ export class FieldService implements OnDestroy {
     return this.getFields().indexOf(field);
   }
 
+  public getPreviousField(field: PdfField): PdfField {
+    return this.getAdjacentField(field, 'backward', false);
+  }
+
   public getNextField(field: PdfField): PdfField {
+    return this.getAdjacentField(field, 'forward', true);
+  }
+
+  public getGroupField(name: string): GroupField {
+    return this.groupedFields
+      .find((groupField) => name === groupField.name);
+  }
+
+  public getAdjacentField(field: PdfField, direction: 'forward' | 'backward', checkHasValue: boolean): PdfField {
     const groupIndex = this.groupedFields
       .findIndex((groupField) => field.name === groupField.name);
 
-    const groupedFields = groupIndex > 0 ?
-      this.groupedFields : [
-        ...this.groupedFields.slice(groupIndex),
-        ...this.groupedFields.slice(0, groupIndex),
-      ];
+    const groupedFields = [
+      ...this.groupedFields.slice(groupIndex),
+      ...this.groupedFields.slice(0, groupIndex),
+    ];
 
-    const nextGroupIndex = groupedFields
+    if (direction === 'backward') {
+      groupedFields.reverse();
+    }
+
+    const adjacentGroupIndex = groupedFields
       .findIndex((groupField) => {
-        return !hasValue(groupField);
+        return !checkHasValue || !hasValue(groupField.value);
       });
 
+    const adjacentGroupField = groupedFields[adjacentGroupIndex];
 
-    const nextGroupField = this.groupedFields[nextGroupIndex];
-
-    if (!nextGroupField) {
+    if (!adjacentGroupField) {
       return null;
     }
 
-    return this.getFields()
-      .find((field) => {
-        return field.name === nextGroupField.name;
-      });
-  }
+    const fields = this.getFields()
 
-  public getBackField(field: PdfField): PdfField {
-    const fields = this.getGroupedRadioButtonFields();
-    const index = fields.indexOf(field);
-    return index === -1 ? null : fields[index - 1];
+    if (direction === 'backward') {
+      fields.reverse();
+    }
+
+    return fields
+      .find((field) => {
+        return field.name === adjacentGroupField.name;
+      });
   }
 
   public getFirstField(): PdfField {
     const fields = this.getFields();
     return fields[0];
-  }
-
-  public getGroupedRadioButtonFields(): PdfField[] {
-    return Object.values(this.getFields()
-      .reduce((accum, field: PdfField) => {
-        const name = field.type === FieldType.RadioButton ? field.name || field.guid : field.guid;
-
-        if (!accum[name]) {
-          accum[name] = field;
-        }
-
-        return accum;
-      }, {}));
   }
 
   public scrollToField(field: PdfField): void {

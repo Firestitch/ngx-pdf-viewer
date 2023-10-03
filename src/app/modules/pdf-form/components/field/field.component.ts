@@ -77,8 +77,24 @@ export class FieldComponent implements OnInit, OnDestroy {
       });
   }
 
-  public get hasValue(): boolean {
-    return hasValue(this.field)
+  public get required(): boolean {
+    if (!this.field.required) {
+      return false;
+    }
+
+    let value = this.field.value;
+    if (this.field.type === FieldType.RadioButton) {
+      const groupField = this._fieldService.getGroupField(this.field.name);
+      if (groupField) {
+        value = groupField.value;
+      }
+    }
+
+    if ([FieldType.RadioButton, FieldType.Checkbox].includes(this.field.type as FieldType)) {
+      return !value;
+    }
+
+    return !(hasValue(value) && !!String(value).length);
   }
 
   public select(): void {

@@ -13,7 +13,7 @@
     box-sizing: border-box;
   }
 
-  &.required:not(.has-value):not(.selected) {
+  &.required {
     background-color: #F7ADAA;
   }
 

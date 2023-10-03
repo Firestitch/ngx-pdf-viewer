@@ -42,8 +42,6 @@ export class FieldInputComponent implements OnInit, OnDestroy {
 
   public FieldType = FieldType;
   public FieldFormat = FieldFormat;
-  public nextField: PdfField;
-  public backField: PdfField;
   public radioButtonField: PdfField = null;
   public radioButtonFields: PdfField[] = [];
   public description;
@@ -87,8 +85,6 @@ export class FieldInputComponent implements OnInit, OnDestroy {
   }
 
   public updateField(focus: boolean) {
-    this.backField = this._fieldService.getBackField(this.field);
-    this.nextField = this._fieldService.getNextField(this.field);
     this.description = '';
     this.label = '';
 
@@ -167,8 +163,10 @@ export class FieldInputComponent implements OnInit, OnDestroy {
   }
 
   public back() {
-    if (this.backField) {
-      this._fieldService.selectField = this.backField;
+    const backField = this._fieldService.getPreviousField(this.field);
+
+    if (backField) {
+      this._fieldService.selectField = backField;
     }
   }
 
