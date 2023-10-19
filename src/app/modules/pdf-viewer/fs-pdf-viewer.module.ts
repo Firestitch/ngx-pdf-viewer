@@ -3,8 +3,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+
 import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.component';
+
 
 @NgModule({
   imports: [
@@ -20,7 +23,7 @@ import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.compone
   ],
   declarations: [
     FsPdfViewerComponent,
-  ]
+  ],
 })
 export class FsPdfViewerModule {
 

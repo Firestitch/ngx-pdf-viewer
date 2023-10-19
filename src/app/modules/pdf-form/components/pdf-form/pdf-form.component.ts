@@ -1,4 +1,3 @@
-import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import {
   ApplicationRef,
   ChangeDetectionStrategy,
@@ -14,12 +13,15 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+
+import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { MatSidenavContent } from '@angular/material/sidenav';
+
+import { FsApiFile } from '@firestitch/api';
 
 import { Subject } from 'rxjs';
 import { debounceTime, filter, takeUntil } from 'rxjs/operators';
 
-import { FsApiFile } from '@firestitch/api';
 
 import { PageRenderedEvent } from 'ngx-extended-pdf-viewer';
 
@@ -33,8 +35,8 @@ import { FieldComponent } from '../field/field.component';
 
 @Component({
   selector: 'fs-pdf-form',
-  templateUrl: 'pdf-form.component.html',
-  styleUrls: ['pdf-form.component.scss'],
+  templateUrl: './pdf-form.component.html',
+  styleUrls: ['./pdf-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FieldService],
 })
@@ -52,7 +54,7 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
   @Input() public pdf: string | FsApiFile;
   @Input() public name;
   @Input() public fields: PdfField[] = [];
-  @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
+  @Input() public actions: { label?: string; click?: () => any; color?: string }[] = [];
 
   @Output() public fieldChanged = new EventEmitter<PdfField>();
   @Output() public fieldBlurred = new EventEmitter<PdfField>();
@@ -149,7 +151,6 @@ export class FsPdfFormComponent implements OnInit, OnDestroy {
     fieldContainerEl.classList.add('field-container');
 
     page.append(fieldContainerEl);
-
     this.getFields()
       .filter((field) => field.pageNumber === event.pageNumber)
       .sort((a, b) => a.tabIndex - b.tabIndex)

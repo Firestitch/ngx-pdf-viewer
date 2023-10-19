@@ -17,9 +17,9 @@ export interface PdfField {
   format?: string;
   default?: any;
   tabIndex?: number;
-  top?: number,
-  left?: number,
-  width?: number,
-  height?: number,
-  pageNumber?: number,
+  top?: number;
+  left?: number;
+  width?: number;
+  height?: number;
+  pageNumber?: number;
 }

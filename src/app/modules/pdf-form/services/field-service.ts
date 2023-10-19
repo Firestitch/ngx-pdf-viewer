@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 
 import { FsPrompt } from '@firestitch/prompt';
 
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { FieldType } from '../enums';
 import { hasValue, initField } from '../helpers';
@@ -22,7 +22,7 @@ export class FieldService implements OnDestroy {
   private _finished$ = new Subject<any>();
   private _destroy$ = new Subject();
 
-  public constructor(
+  constructor(
     private _prompt: FsPrompt,
   ) { }
 
@@ -49,20 +49,20 @@ export class FieldService implements OnDestroy {
     this._pdfFieldSet.delete(field);
   }
 
-  public get fieldSelected$(): BehaviorSubject<PdfField> {
-    return this._fieldSelected$;
+  public get fieldSelected$(): Observable<PdfField> {
+    return this._fieldSelected$.asObservable();
   }
 
-  public get fieldChanged$(): Subject<PdfField> {
-    return this._fieldChanged$;
+  public get fieldChanged$(): Observable<PdfField> {
+    return this._fieldChanged$.asObservable();
   }
 
-  public get fieldBlurred$(): Subject<PdfField> {
-    return this._fieldBlurred$;
+  public get fieldBlurred$(): Observable<PdfField> {
+    return this._fieldBlurred$.asObservable();
   }
 
-  public get finished$(): Subject<any> {
-    return this._finished$;
+  public get finished$(): Observable<any> {
+    return this._finished$.asObservable();
   }
 
   public get fieldSelected() {
@@ -74,7 +74,7 @@ export class FieldService implements OnDestroy {
   }
 
   public set blurField(pdfField: PdfField) {
-    this.fieldBlurred$.next(pdfField);
+    this._fieldBlurred$.next(pdfField);
   }
 
   public checkRadioButtonField(name: string, pdfField: PdfField) {
@@ -146,36 +146,9 @@ export class FieldService implements OnDestroy {
       .find((groupedField) => groupedField.name === name);
   }
 
-  private _groupFields(fields): void {
-    fields
-      .forEach((field: PdfField) => {
-        const name = field.name || field.guid;
-        let groupField = this._groupedFields.find((groupField) => groupField.name === field.name);
-
-        if (!groupField) {
-          groupField = {
-            name,
-            type: field.type,
-            value: null,
-          };
-          this._groupedFields.push(groupField);
-        }
-
-        if (field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
-          groupField.values = [
-            ...(groupField.values || []),
-            field.guid,
-          ];
-        }
-
-        groupField.required = field.required ?? groupField.required ?? false;
-        groupField.readonly = field.readonly ?? groupField.readonly ?? false;
-      });
-  }
-
-  public get totalRequired(): number {
+  public get totalEditable(): number {
     return Object.values(this.groupedFields)
-      .filter((field) => field.required)
+      .filter((field: PdfField) => !field.readonly)
       .length;
   }
 
@@ -189,11 +162,15 @@ export class FieldService implements OnDestroy {
   }
 
   public continue(): void {
-    const nextField = this.getNextField(this.fieldSelected);
-    if (nextField) {
-      this.selectField = nextField;
+    if (this.fieldSelected && this.fieldSelected.required && !hasValue(this.fieldSelected.value)) {
+      this.selectField = this.fieldSelected;
     } else {
-      this.finish();
+      const nextField = this.getNextField(this.fieldSelected);
+      if (nextField) {
+        this.selectField = nextField;
+      } else {
+        this.finish();
+      }
     }
   }
 
@@ -234,7 +211,11 @@ export class FieldService implements OnDestroy {
       .find((groupField) => name === groupField.name);
   }
 
-  public getAdjacentField(field: PdfField, direction: 'forward' | 'backward', checkHasValue: boolean): PdfField {
+  public getAdjacentField(
+    field: PdfField,
+    direction: 'forward' | 'backward',
+    checkHasValue: boolean,
+  ): PdfField {
     const groupIndex = this.groupedFields
       .findIndex((groupField) => field.name === groupField.name);
 
@@ -248,8 +229,8 @@ export class FieldService implements OnDestroy {
     }
 
     const adjacentGroupIndex = groupedFields
-      .findIndex((groupField) => {
-        return !checkHasValue || !hasValue(groupField.value);
+      .findIndex((groupField, index) => {
+        return index && !groupField.readonly && (!checkHasValue || !hasValue(groupField.value));
       });
 
     const adjacentGroupField = groupedFields[adjacentGroupIndex];
@@ -258,27 +239,28 @@ export class FieldService implements OnDestroy {
       return null;
     }
 
-    const fields = this.getFields()
+    const fields = this.getFields();
 
     if (direction === 'backward') {
       fields.reverse();
     }
 
     return fields
-      .find((field) => {
-        return field.name === adjacentGroupField.name;
+      .find((item) => {
+        return item.name === adjacentGroupField.name;
       });
   }
 
   public getFirstField(): PdfField {
     const fields = this.getFields();
+
     return fields[0];
   }
 
   public scrollToField(field: PdfField): void {
     const el: any = this.containerEl.querySelector(`.field[data-guid="${field.guid}"]`);
     if (el) {
-      this.containerEl.scroll({ top: this.getOffsetTop(el) - 50, behavior: 'smooth' });
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 
@@ -292,7 +274,7 @@ export class FieldService implements OnDestroy {
     let top = el.offsetTop;
 
     if (el && !this.containerEl.isEqualNode(el.parentNode)) {
-      top += this.getOffsetTop(el.parentNode)
+      top += this.getOffsetTop(el.parentNode);
     }
 
     return top;
@@ -301,6 +283,34 @@ export class FieldService implements OnDestroy {
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  private _groupFields(fields): void {
+    fields
+      .forEach((field: PdfField) => {
+        const name = field.name || field.guid;
+        let groupField = this._groupedFields
+          .find((item) => item.name === field.name);
+
+        if (!groupField) {
+          groupField = {
+            name,
+            type: field.type,
+            value: field.value ?? null,
+          };
+          this._groupedFields.push(groupField);
+        }
+
+        if (field.type === FieldType.Checkbox || field.type === FieldType.RadioButton) {
+          groupField.values = [
+            ...(groupField.values || []),
+            field.guid,
+          ];
+        }
+
+        groupField.required = field.required ?? groupField.required ?? false;
+        groupField.readonly = field.readonly ?? groupField.readonly ?? false;
+      });
   }
 
 }

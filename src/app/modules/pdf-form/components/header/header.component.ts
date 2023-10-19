@@ -5,26 +5,27 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
 } from '@angular/core';
+
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { FieldService } from '../../services';
 
 
 @Component({
   selector: 'fs-header',
-  templateUrl: 'header.component.html',
-  styleUrls: ['header.component.scss'],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
   @Input() public name;
-  @Input() public actions: { label?: string, click?: () => any, color?: string }[] = [];
+  @Input() public actions: { label?: string; click?: () => any; color?: string }[] = [];
   @Input() public closed: EventEmitter<any>;
   @Input() public started: EventEmitter<any>;
 
@@ -69,7 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public updateProgress(): void {
-    this.total = this._fieldService.totalRequired;
+    this.total = this._fieldService.totalEditable;
     this.complete = this._fieldService.completedGroupFields.length;
     this.completePercent = Math.round((this.complete / this.total) * 100) || 0;
   }
