@@ -5,7 +5,7 @@ import {
   HostListener,
   Inject,
   OnDestroy,
-  OnInit
+  OnInit,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -17,7 +17,7 @@ import {
 } from 'ngx-extended-pdf-viewer';
 
 import { FieldFormat, FieldType } from '../../enums';
-import { hasValue } from '../../helpers';
+import { hasValue, pdfFieldRequired } from '../../helpers';
 import { PdfField } from '../../interfaces';
 import { FieldService } from '../../services/field-service';
 
@@ -30,11 +30,6 @@ import { FieldService } from '../../services/field-service';
 })
 export class FieldComponent implements OnInit, OnDestroy {
 
-  @HostListener('click')
-  public click(): void {
-    this.select();
-  }
-
   public selected = false;
   public FieldType = FieldType;
   public FieldFormat = FieldFormat;
@@ -45,11 +40,16 @@ export class FieldComponent implements OnInit, OnDestroy {
   constructor(
     @Inject('field') private _field: PdfField,
     @Inject('fieldService') private _fieldService: FieldService,
-    @Inject('optionValue') public optionValue: { value: any, label: any },
+    @Inject('optionValue') public optionValue: { value: any; label: any },
     @Inject('scale') public scale: number,
     private _cdRef: ChangeDetectorRef,
     protected _sanitizer: DomSanitizer,
   ) { }
+
+  @HostListener('click')
+  public click(): void {
+    this.select();
+  }
 
   public ngOnInit(): void {
     this._fieldService.fieldSelected$
@@ -78,23 +78,13 @@ export class FieldComponent implements OnInit, OnDestroy {
   }
 
   public get required(): boolean {
-    if (!this.field.required) {
+    if (!pdfFieldRequired(this.field)) {
       return false;
     }
 
-    let value = this.field.value;
-    if (this.field.type === FieldType.RadioButton) {
-      const groupField = this._fieldService.getGroupField(this.field.name);
-      if (groupField) {
-        value = groupField.value;
-      }
-    }
+    const groupField = this._fieldService.getGroupField(this.field.name);
 
-    if ([FieldType.RadioButton, FieldType.Checkbox].includes(this.field.type as FieldType)) {
-      return !value;
-    }
-
-    return !(hasValue(value) && !!String(value).length);
+    return !hasValue(groupField);
   }
 
   public select(): void {

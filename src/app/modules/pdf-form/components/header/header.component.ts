@@ -30,10 +30,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Input() public started: EventEmitter<any>;
 
   public hasStarted;
-  public complete = 0;
+  public completed = 0;
   public zoom = 100;
   public total = 0;
-  public completePercent = 0;
+  public completedPercent = 0;
   public mobile;
 
   private _destroy$ = new Subject();
@@ -70,9 +70,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public updateProgress(): void {
-    this.total = this._fieldService.totalEditable;
-    this.complete = this._fieldService.completedGroupFields.length;
-    this.completePercent = Math.round((this.complete / this.total) * 100) || 0;
+    this.total = this._fieldService.totalRequried;
+    this.completed = this._fieldService.completedRequiredGroupFields.length;
+    this.completedPercent = Math.round((this.completed / this.total) * 100) || 0;
   }
 
   public start(): void {

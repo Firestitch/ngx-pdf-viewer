@@ -10,7 +10,7 @@
       </ng-container>
       <ng-container *ngIf="hasStarted">
         <button
-            *ngIf="complete < total"
+            *ngIf="completed < total"
             type="button"
             color="primary"
             mat-raised-button
@@ -18,7 +18,7 @@
           Continue
         </button>
         <button
-            *ngIf="complete >= total"
+            *ngIf="completed >= total"
             type="button"
             color="primary"
             mat-raised-button
@@ -65,8 +65,8 @@
 <ng-template #progress>
   <div class="progress">
     <ng-container *ngIf="total">
-      {{complete}} of {{total}}
-      <div class="percent">{{completePercent}}% Complete</div> 
+      {{completed}} of {{total}}
+      <div class="percent">{{completedPercent}}% Complete</div> 
     </ng-container>
   </div>
 </ng-template>

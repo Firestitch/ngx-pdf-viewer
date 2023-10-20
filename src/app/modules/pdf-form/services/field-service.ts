@@ -5,7 +5,7 @@ import { FsPrompt } from '@firestitch/prompt';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { FieldType } from '../enums';
-import { hasValue, initField } from '../helpers';
+import { groupFieldRequired, hasValue, initField, pdfFieldRequired } from '../helpers';
 import { GroupField, PdfField } from '../interfaces';
 
 
@@ -65,7 +65,7 @@ export class FieldService implements OnDestroy {
     return this._finished$.asObservable();
   }
 
-  public get fieldSelected() {
+  public get fieldSelected(): PdfField {
     return this._fieldSelected$.getValue();
   }
 
@@ -130,10 +130,12 @@ export class FieldService implements OnDestroy {
     this._fieldChanged$.next(pdfField);
   }
 
-  public get completedGroupFields(): GroupField[] {
+  public get completedRequiredGroupFields(): GroupField[] {
     return Object.values(this.groupedFields)
-      .filter((field) => {
-        return field.type === FieldType.Checkbox ? (field.value || []).length : !!field.value;
+      .filter((groupedField) => {
+        return groupedField.required &&
+          !groupedField.readonly &&
+          hasValue(groupedField);
       });
   }
 
@@ -152,6 +154,12 @@ export class FieldService implements OnDestroy {
       .length;
   }
 
+  public get totalRequried(): number {
+    return Object.values(this.groupedFields)
+      .filter((field: PdfField) => field.required && !field.readonly)
+      .length;
+  }
+
   public get requiredGroupedFields(): GroupField[] {
     return Object.values(this.groupedFields)
       .filter((field) => field.required);
@@ -162,7 +170,9 @@ export class FieldService implements OnDestroy {
   }
 
   public continue(): void {
-    if (this.fieldSelected && this.fieldSelected.required && !hasValue(this.fieldSelected.value)) {
+    const groupField = this.getGroupField(this.fieldSelected?.name);
+
+    if (groupField && pdfFieldRequired(this.fieldSelected) && !hasValue(groupField)) {
       this.selectField = this.fieldSelected;
     } else {
       const nextField = this.getNextField(this.fieldSelected);
@@ -207,8 +217,8 @@ export class FieldService implements OnDestroy {
   }
 
   public getGroupField(name: string): GroupField {
-    return this.groupedFields
-      .find((groupField) => name === groupField.name);
+    return name ? this.groupedFields
+      .find((groupField) => name === groupField.name) : null;
   }
 
   public getAdjacentField(
@@ -230,7 +240,7 @@ export class FieldService implements OnDestroy {
 
     const adjacentGroupIndex = groupedFields
       .findIndex((groupField, index) => {
-        return index && !groupField.readonly && (!checkHasValue || !hasValue(groupField.value));
+        return index && groupFieldRequired(groupField) && (!checkHasValue || !hasValue(groupField));
       });
 
     const adjacentGroupField = groupedFields[adjacentGroupIndex];
