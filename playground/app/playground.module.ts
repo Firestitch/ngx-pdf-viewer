@@ -1,20 +1,18 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 
-import { FsDatePickerModule } from '@firestitch/datepicker';
+import { FsApiModule } from '@firestitch/api';
 import { FsExampleModule } from '@firestitch/example';
 import { FsMessageModule } from '@firestitch/message';
 import { FsPdfViewerModule } from '@firestitch/pdf';
 
-import { FsApiModule } from '@firestitch/api';
-import { FsPdfFormModule } from 'src/app/modules/pdf-form/fs-pdf-form.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { AppComponent } from './app.component';
 import {
   ExamplesComponent,
-  FormComponent,
   ViewerComponent,
 } from './components';
 import { AppMaterialModule } from './material.module';
@@ -29,12 +27,10 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     FsPdfViewerModule,
-    FsPdfFormModule,
     FsApiModule.forRoot(),
     BrowserAnimationsModule,
     AppMaterialModule,
     FormsModule,
-    FsDatePickerModule.forRoot(),
     FsExampleModule.forRoot(),
     FsMessageModule.forRoot(),
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
@@ -45,7 +41,6 @@ const routes: Routes = [
     AppComponent,
     ExamplesComponent,
     ViewerComponent,
-    FormComponent,
   ],
 })
 export class PlaygroundModule {
