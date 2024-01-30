@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 
 import { FsApiFile } from '@firestitch/api';
+import { FsFile } from '@firestitch/file';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -31,7 +32,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @ViewChild(NgxExtendedPdfViewerComponent)
   public extendedPdfViewer: NgxExtendedPdfViewerComponent;
 
-  @Input() public pdf: string | FsApiFile | ArrayBuffer | Blob | Uint8Array | URL;
+  @Input() public pdf: string | ArrayBuffer | Blob | Uint8Array | URL | FsFile | FsApiFile;
   @Input() public height;
   @Input() public backgroundColor = 'rgb(232, 232, 235)';
   @Input() public pageViewMode: 'infinite-scroll' | 'multiple' | 'single' = 'infinite-scroll';
@@ -40,7 +41,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Output() public init = new EventEmitter();
   @Output() public pageRendered = new EventEmitter<PageRenderedEvent>();
 
-  public src;
+  public src: string | ArrayBuffer | Blob | Uint8Array | URL;
 
   private _destroy$ = new Subject();
 
@@ -82,6 +83,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
           this.src = blob;
           this._cdRef.markForCheck();
         });
+    } else if (this.pdf instanceof FsFile) {
+      this.src = this.pdf.file;
     } else {
       this.src = this.pdf;
     }
