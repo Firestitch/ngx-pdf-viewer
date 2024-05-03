@@ -42,6 +42,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Output() public pageRendered = new EventEmitter<PageRenderedEvent>();
 
   public src: string | ArrayBuffer | Blob | Uint8Array | URL;
+  public zoomFactor;
 
   private _destroy$ = new Subject();
 
@@ -62,6 +63,18 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
     this.extendedPdfViewer.zoomToPageWidth = () => {
       return Promise.resolve();
     };
+  }
+
+  public zoomIn(): void {
+    this.zoom = ((this.zoomFactor * 1.25) * 100) + '%';
+  }
+
+  public zoomOut(): void {
+    this.zoom = ((this.zoomFactor * .75) * 100) + '%';
+  }
+
+  public currentZoomFactor(zoomFactor): void {
+    this.zoomFactor = zoomFactor;
   }
 
   public resize(): void {

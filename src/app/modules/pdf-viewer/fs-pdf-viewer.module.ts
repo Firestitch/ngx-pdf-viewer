@@ -6,6 +6,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.component';
 
 
@@ -14,7 +16,9 @@ import { FsPdfViewerComponent } from './components/pdf-viewer/pdf-viewer.compone
     CommonModule,
     FormsModule,
 
+    MatButtonModule,
     MatProgressSpinnerModule,
+    MatIconModule,
 
     NgxExtendedPdfViewerModule,
   ],
