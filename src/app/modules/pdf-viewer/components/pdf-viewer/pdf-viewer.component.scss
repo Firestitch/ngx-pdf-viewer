@@ -13,7 +13,7 @@
     }
 
     .pdfViewer {
-      overflow: auto;
+      overflow: hidden;
       padding-top: 16px;
       
       &:not(.removePageBorders) .page {
