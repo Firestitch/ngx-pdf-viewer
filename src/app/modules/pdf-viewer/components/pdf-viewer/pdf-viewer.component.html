@@ -14,8 +14,10 @@
       <mat-icon>zoom_out</mat-icon>
     </a>
   </div>
-  <ng-container *ngIf="src">
-    <ngx-extended-pdf-viewer
+
+
+ <ng-container *ngIf="src">
+    <!-- <ngx-extended-pdf-viewer
         [ngClass]=" { 'zoom-page-width': zoom === 'page-width' }"
         class="mat-elevation-z2"
         [src]="src"
@@ -28,11 +30,21 @@
         (currentZoomFactor)="currentZoomFactor($event)"
         (pageRendered)="pageRendered.emit($event)"
         (pdfLoaded)="pdfLoaded()">
-    </ngx-extended-pdf-viewer>
+    </ngx-extended-pdf-viewer> -->
+    <pdf-viewer
+      [ngClass]="{ rendered: rendered }" 
+      [autoresize]="true"
+      (page-rendered)="loaded()"
+      [src]="src"
+      [zoom]="zoomFactor"
+      [render-text]="true"
+      [original-size]="false">
+    </pdf-viewer>
   </ng-container>
   <ng-container *ngIf="!src">
     <mat-progress-spinner
       [mode]="'indeterminate'">
     </mat-progress-spinner>
-  </ng-container>
-</div>
+  </ng-container> 
+</div> 
+

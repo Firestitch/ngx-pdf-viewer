@@ -2,7 +2,7 @@
   "name": "@firestitch/pdf-viewer",
   "title": "PDF Viewer",
   "description": "@firestitch/ngx-pdf-viewer",
-  "version": "13.1.0",
+  "version": "13.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-pdf-viewer"
@@ -29,7 +29,7 @@
     "npm-update": "npx npm-check-updates -u \"/@firestitch/\" --target semver"
   },
   "dependencies": {
-    "ngx-extended-pdf-viewer": "^18.1.14"
+    "ng2-pdf-viewer": "^9.1.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.11",
@@ -67,7 +67,8 @@
     "npm-run-all": "^4.1.5",
     "rxjs": "^6.5.5",
     "typescript": "4.6.4",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.4",
+    "pdfjs-dist": "^4.4.168"
   },
   "engines": {
     "node": ">=6.0.0"

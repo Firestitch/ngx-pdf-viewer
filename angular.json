@@ -21,12 +21,7 @@
             "tsConfig": "playground/tsconfig.app.json",
             "assets": [
               "playground/favicon.ico",
-              "playground/assets",
-              {
-                "glob": "**/*",
-                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-                "output": "./assets/"
-              }
+              "playground/assets"
             ],
             "styles": [
               "playground/styles.scss"
