@@ -105,6 +105,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
           this.src = data;
           this._cdRef.markForCheck();
         });
+    } else if (this.pdf instanceof ArrayBuffer) {
+      this.src = new Uint8Array(this.pdf);
     } else {
       this.src = this.pdf.toString();
     }
