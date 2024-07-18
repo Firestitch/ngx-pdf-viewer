@@ -14,7 +14,7 @@ import { FsApiFile } from '@firestitch/api';
 import { FsFile } from '@firestitch/file';
 
 import { Observable, of, Subject } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 
@@ -76,14 +76,14 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
     if (this.pdf instanceof FsApiFile || this.pdf instanceof FsFile || this.pdf instanceof Blob) {
       of(null)
         .pipe(
-          map(() => {             
+          switchMap(() => {             
             if(this.pdf instanceof FsApiFile) {
               return this.pdf.blob; 
             } else if(this.pdf instanceof FsFile) {
-              return this.pdf.file; 
+              return of(this.pdf.file); 
             }
 
-            return this.pdf;
+            return of(this.pdf);
           }),
           switchMap((blob: any) => {
             return new Observable((observer) => {
