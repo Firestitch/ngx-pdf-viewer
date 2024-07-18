@@ -17,20 +17,6 @@
 
 
  <ng-container *ngIf="src">
-    <!-- <ngx-extended-pdf-viewer
-        [ngClass]=" { 'zoom-page-width': zoom === 'page-width' }"
-        class="mat-elevation-z2"
-        [src]="src"
-        [pageViewMode]="pageViewMode"
-        [zoom]="zoom"
-        [height]="height"
-        [showToolbar]="false"  
-        [backgroundColor]="backgroundColor"
-        [sidebarVisible]="false"
-        (currentZoomFactor)="currentZoomFactor($event)"
-        (pageRendered)="pageRendered.emit($event)"
-        (pdfLoaded)="pdfLoaded()">
-    </ngx-extended-pdf-viewer> -->
     <pdf-viewer
       [ngClass]="{ rendered: rendered }" 
       [autoresize]="true"
