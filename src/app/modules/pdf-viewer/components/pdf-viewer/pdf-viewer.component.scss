@@ -1,37 +1,3 @@
-// :host ::ng-deep {
-//   ngx-extended-pdf-viewer {
-//     --pdfViewer-padding-bottom: 0;
-//   }
-
-//   ngx-extended-pdf-viewer {
-//     pdf-toolbar {
-//       display: none;
-//     }
-
-//     #viewerContainer {
-//       top: 0px !important;
-//     }
-
-//     .pdfViewer {
-//       overflow: hidden;
-//       padding-top: 16px;
-      
-//       &:not(.removePageBorders) .page {
-//         border: none !important;
-//         margin: 12px auto !important;
-
-//         &:first-child {
-//           margin-top: 0 !important;
-//         }
-
-//         &:last-child {
-//           margin-bottom: 0 !important;
-//         }
-//       }
-//     }
-//   } 
-// }
-
 .container {
   position: relative;
 
@@ -53,7 +19,10 @@ mat-progress-spinner {
 }
 
 :host {
-    display: contents;
+  display: block;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #ccc;
 }
 
 ::ng-deep {
@@ -65,5 +34,10 @@ mat-progress-spinner {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
     height: unset !important;
+    background-color: #ccc;
+
+    .pdfViewer .page:last-child {
+      margin-bottom: 0 !important;
+    }
   }
 }
