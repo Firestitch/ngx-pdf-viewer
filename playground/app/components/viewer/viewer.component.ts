@@ -19,6 +19,13 @@ export class ViewerComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
+    this.load(); 
+    setTimeout(() => {
+      this.load(); 
+    }, 2000);
+  }
+
+  public load(): void {
     this._api.createApiFile(`${window.location.href}assets/file-sample_150kB.pdf`)
       .blob
       .subscribe((blob) => {

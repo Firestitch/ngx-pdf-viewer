@@ -16,7 +16,7 @@ import { FsFile } from '@firestitch/file';
 import { Observable, of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
-import { PdfViewerComponent } from 'ng2-pdf-viewer';
+import { PdfViewerComponent, RenderTextMode } from 'ng2-pdf-viewer';
 
 
 @Component({
@@ -32,6 +32,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
 
   @Input() public pdf: string | ArrayBuffer | Blob | Uint8Array | URL | FsFile | FsApiFile;
   @Input() public height;
+  @Input() public renderText = true;
+  @Input() public renderTextMode: RenderTextMode = RenderTextMode.ENABLED;
   @Input() public backgroundColor = 'rgb(232, 232, 235)';
 
   @Output() public init = new EventEmitter();
