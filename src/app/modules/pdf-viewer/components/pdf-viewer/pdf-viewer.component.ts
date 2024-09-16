@@ -34,6 +34,8 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Input() public pdf: string | ArrayBuffer | Blob | Uint8Array | URL | FsFile | FsApiFile;
   @Input() public height;
   @Input() public renderText = true;
+  @Input() public zoomEnabled = true;
+  @Input() public zoom = 1;
   @Input() public renderTextMode: RenderTextMode = RenderTextMode.ENABLED;
   
   @Input() 
@@ -43,7 +45,6 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Output() public init = new EventEmitter();
 
   public src: string | Uint8Array;
-  public zoomFactor = 1;
   public rendered = false;
 
   private _destroy$ = new Subject();
@@ -62,15 +63,11 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   }
 
   public zoomIn(): void {
-    this.zoomFactor += .25;
+    this.zoom += .25;
   }
 
   public zoomOut(): void {
-    this.zoomFactor -= .25;
-  }
-
-  public currentZoomFactor(zoomFactor): void {
-    this.zoomFactor = zoomFactor;
+    this.zoom -= .25;
   }
 
   public ngOnDestroy(): void {

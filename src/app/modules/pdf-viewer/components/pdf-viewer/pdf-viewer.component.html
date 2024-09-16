@@ -1,20 +1,18 @@
 <div class="container">
-  <div class="action-container">
-    
-  </div>
-  <div class="action">
-    <a 
-        mat-mini-fab
-        (click)="zoomIn()">
-      <mat-icon>zoom_in</mat-icon>
-    </a>
-    <a 
-        mat-mini-fab
-        (click)="zoomOut()">
-      <mat-icon>zoom_out</mat-icon>
-    </a>
-  </div>
-
+  <ng-container *ngIf="rendered && zoomEnabled">
+    <div class="action">
+      <a 
+          mat-mini-fab
+          (click)="zoomIn()">
+        <mat-icon>zoom_in</mat-icon>
+      </a>
+      <a 
+          mat-mini-fab
+          (click)="zoomOut()">
+        <mat-icon>zoom_out</mat-icon>
+      </a>
+    </div>
+  </ng-container>
 
  <ng-container *ngIf="src">
     <pdf-viewer
@@ -22,7 +20,7 @@
       [autoresize]="true"
       (page-rendered)="loaded()"
       [src]="src"
-      [zoom]="zoomFactor"
+      [zoom]="zoom"
       [render-text]="renderText"
       [render-text-mode]="renderTextMode"
       [original-size]="false">
