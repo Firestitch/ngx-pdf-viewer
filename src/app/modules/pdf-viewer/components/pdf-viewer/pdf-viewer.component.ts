@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostBinding,
   Input,
   OnDestroy,
   OnInit,
@@ -34,7 +35,10 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Input() public height;
   @Input() public renderText = true;
   @Input() public renderTextMode: RenderTextMode = RenderTextMode.ENABLED;
-  @Input() public backgroundColor = 'rgb(232, 232, 235)';
+  
+  @Input() 
+  @HostBinding('style.background-color')
+  public backgroundColor = 'rgb(232, 232, 235)';
 
   @Output() public init = new EventEmitter();
 

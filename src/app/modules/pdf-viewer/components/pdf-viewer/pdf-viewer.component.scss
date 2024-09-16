@@ -22,7 +22,6 @@ mat-progress-spinner {
   display: block;
   padding: 20px;
   box-sizing: border-box;
-  background: #ccc;
 }
 
 ::ng-deep {
@@ -34,7 +33,6 @@ mat-progress-spinner {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
     height: unset !important;
-    background-color: #ccc;
 
     .pdfViewer .page:last-child {
       margin-bottom: 0 !important;
