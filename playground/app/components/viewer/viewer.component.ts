@@ -16,13 +16,17 @@ export class ViewerComponent implements OnInit {
   constructor(
     private _api: FsApi,
     private _cdRef: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   public ngOnInit(): void {
-    this.load(); 
+    this.load();
     setTimeout(() => {
-      this.load(); 
+      this.load();
     }, 2000);
+  }
+
+  public inited(): void {
+    console.log('inited');
   }
 
   public load(): void {

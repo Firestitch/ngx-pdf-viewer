@@ -37,11 +37,12 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   @Input() public zoomEnabled = true;
   @Input() public zoom = 1;
   @Input() public renderTextMode: RenderTextMode = RenderTextMode.ENABLED;
-  
-  @Input() 
+
+  @Input()
   @HostBinding('style.background-color')
   public backgroundColor = 'rgb(232, 232, 235)';
 
+  @Output() public pageRenderer = new EventEmitter();
   @Output() public init = new EventEmitter();
 
   public src: string | Uint8Array;
@@ -57,9 +58,14 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
     this._initSrc();
   }
 
-  public loaded(): void {
+  public pageRendered(): void {
     this.rendered = true;
+    this.pageRenderer.emit();
     this.pdfViewer.updateSize();
+  }
+
+  public loadCompleted(): void {
+    this.init.emit();
   }
 
   public zoomIn(): void {
@@ -79,11 +85,11 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
     if (this.pdf instanceof FsApiFile || this.pdf instanceof FsFile || this.pdf instanceof Blob) {
       of(null)
         .pipe(
-          switchMap(() => {             
-            if(this.pdf instanceof FsApiFile) {
-              return this.pdf.blob; 
-            } else if(this.pdf instanceof FsFile) {
-              return of(this.pdf.file); 
+          switchMap(() => {
+            if (this.pdf instanceof FsApiFile) {
+              return this.pdf.blob;
+            } else if (this.pdf instanceof FsFile) {
+              return of(this.pdf.file);
             }
 
             return of(this.pdf);
@@ -97,9 +103,9 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
               };
               fileReader.onerror = (e) => {
                 observer.error(e);
-              };  
-              
-              fileReader.readAsArrayBuffer(blob);  
+              };
+
+              fileReader.readAsArrayBuffer(blob);
             });
           }),
           takeUntil(this._destroy$),
@@ -110,7 +116,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
         });
     } else if (this.pdf instanceof ArrayBuffer) {
       this.src = new Uint8Array(this.pdf);
-    } else if(this.pdf && typeof this.pdf === 'string') {
+    } else if (this.pdf && typeof this.pdf === 'string') {
       this.src = this.pdf.toString();
     }
   }

@@ -1,6 +1,7 @@
 <ng-container *ngIf="blob">
   <fs-pdf-viewer
-    [pdf]="blob">
+    [pdf]="blob"
+    (init)="inited()">
   </fs-pdf-viewer>
 </ng-container>
 

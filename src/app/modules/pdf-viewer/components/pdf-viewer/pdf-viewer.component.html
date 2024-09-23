@@ -18,7 +18,8 @@
     <pdf-viewer
       [ngClass]="{ rendered: rendered }" 
       [autoresize]="true"
-      (page-rendered)="loaded()"
+      (page-rendered)="pageRendered()"
+      (after-load-complete)="loadCompleted()"
       [src]="src"
       [zoom]="zoom"
       [render-text]="renderText"
@@ -32,4 +33,3 @@
     </mat-progress-spinner>
   </ng-container> 
 </div> 
-
