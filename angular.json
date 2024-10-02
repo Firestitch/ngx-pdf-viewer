@@ -29,7 +29,13 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
               "highlight.js"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src",
+                "node_modules/"
+              ]
+            }
           },
           "configurations": {
             "production": {
