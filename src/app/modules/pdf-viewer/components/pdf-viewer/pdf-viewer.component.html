@@ -1,35 +1,34 @@
 <div class="container">
   <ng-container *ngIf="rendered && zoomEnabled">
     <div class="action">
-      <a 
+      <a
           mat-mini-fab
           (click)="zoomIn()">
-        <mat-icon>zoom_in</mat-icon>
+        <mat-icon>
+          zoom_in
+        </mat-icon>
       </a>
-      <a 
+      <a
           mat-mini-fab
           (click)="zoomOut()">
-        <mat-icon>zoom_out</mat-icon>
+        <mat-icon>
+          zoom_out
+        </mat-icon>
       </a>
     </div>
   </ng-container>
-
- <ng-container *ngIf="src">
-    <pdf-viewer
-      [ngClass]="{ rendered: rendered }" 
-      [autoresize]="true"
-      (page-rendered)="pageRendered()"
-      (after-load-complete)="loadCompleted()"
-      [src]="src"
-      [zoom]="zoom"
-      [render-text]="renderText"
-      [render-text-mode]="renderTextMode"
-      [original-size]="false">
-    </pdf-viewer>
-  </ng-container>
-  <ng-container *ngIf="!src">
-    <mat-progress-spinner
-      [mode]="'indeterminate'">
-    </mat-progress-spinner>
-  </ng-container> 
-</div> 
+  <pdf-viewer
+    [ngClass]="{ rendered: rendered }"
+    [autoresize]="true"
+    (page-rendered)="pageRendered()"
+    (after-load-complete)="loadCompleted()"
+    [src]="src"
+    [zoom]="zoom"
+    [render-text]="renderText"
+    [render-text-mode]="renderTextMode"
+    [original-size]="false">
+  </pdf-viewer>
+  <!-- <ng-container *ngIf="!src">
+    <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
+  </ng-container> -->
+</div>

@@ -10,7 +10,7 @@ import { FsApi } from '@firestitch/api';
 })
 export class ViewerComponent implements OnInit {
 
-  public pdf = '/assets/b4564c29704094e3029bd9ba480486fd.pdf';
+  public pdf;
   public blob: Blob;
 
   constructor(

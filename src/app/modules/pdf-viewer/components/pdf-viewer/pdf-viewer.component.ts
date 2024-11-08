@@ -4,9 +4,9 @@ import {
   Component,
   EventEmitter,
   HostBinding,
+  inject,
   Input,
   OnDestroy,
-  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -26,12 +26,52 @@ import { PdfViewerComponent, RenderTextMode } from 'ng2-pdf-viewer';
   styleUrls: ['./pdf-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FsPdfViewerComponent implements OnInit, OnDestroy {
+export class FsPdfViewerComponent implements OnDestroy {
 
   @ViewChild(PdfViewerComponent)
   public pdfViewer: PdfViewerComponent;
 
-  @Input() public pdf: string | ArrayBuffer | Blob | Uint8Array | URL | FsFile | FsApiFile;
+  @Input() 
+  public set pdf(pdf: string | ArrayBuffer | Blob | Uint8Array | URL | FsFile | FsApiFile) {
+    this.rendered = false;
+    if (pdf instanceof FsApiFile || pdf instanceof FsFile || pdf instanceof Blob) {
+      of(null)
+        .pipe(
+          switchMap(() => {
+            if (pdf instanceof FsApiFile) {
+              return pdf.blob;
+            } else if (pdf instanceof FsFile) {
+              return of(pdf.file);
+            }
+
+            return of(pdf);
+          }),
+          switchMap((blob: any) => {
+            return new Observable((observer) => {
+              const fileReader = new FileReader();
+              fileReader.onload = () => {
+                observer.next(new Uint8Array(fileReader.result as ArrayBuffer));
+                observer.complete();
+              };
+              fileReader.onerror = (e) => {
+                observer.error(e);
+              };
+
+              fileReader.readAsArrayBuffer(blob);
+            });
+          }),
+          takeUntil(this._destroy$),
+        )
+        .subscribe((data: any) => {
+          this.src = data;
+          this._cdRef.markForCheck();
+        });
+    } else if (pdf instanceof ArrayBuffer) {
+      this.src = new Uint8Array(pdf);
+    } else if (pdf && typeof pdf === 'string') {
+      this.src = pdf.toString();
+    }
+  }
   @Input() public height;
   @Input() public renderText = true;
   @Input() public zoomEnabled = true;
@@ -49,14 +89,7 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   public rendered = false;
 
   private _destroy$ = new Subject();
-
-  constructor(
-    private _cdRef: ChangeDetectorRef,
-  ) { }
-
-  public ngOnInit(): void {
-    this._initSrc();
-  }
+  private _cdRef = inject(ChangeDetectorRef);
 
   public pageRendered(): void {
     this.rendered = true;
@@ -79,46 +112,6 @@ export class FsPdfViewerComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this._destroy$.next(null);
     this._destroy$.complete();
-  }
-
-  private _initSrc() {
-    if (this.pdf instanceof FsApiFile || this.pdf instanceof FsFile || this.pdf instanceof Blob) {
-      of(null)
-        .pipe(
-          switchMap(() => {
-            if (this.pdf instanceof FsApiFile) {
-              return this.pdf.blob;
-            } else if (this.pdf instanceof FsFile) {
-              return of(this.pdf.file);
-            }
-
-            return of(this.pdf);
-          }),
-          switchMap((blob: any) => {
-            return new Observable((observer) => {
-              const fileReader = new FileReader();
-              fileReader.onload = () => {
-                observer.next(new Uint8Array(fileReader.result as ArrayBuffer));
-                observer.complete();
-              };
-              fileReader.onerror = (e) => {
-                observer.error(e);
-              };
-
-              fileReader.readAsArrayBuffer(blob);
-            });
-          }),
-          takeUntil(this._destroy$),
-        )
-        .subscribe((data: any) => {
-          this.src = data;
-          this._cdRef.markForCheck();
-        });
-    } else if (this.pdf instanceof ArrayBuffer) {
-      this.src = new Uint8Array(this.pdf);
-    } else if (this.pdf && typeof this.pdf === 'string') {
-      this.src = this.pdf.toString();
-    }
   }
 }
 
