@@ -68,8 +68,10 @@ export class FsPdfViewerComponent implements OnDestroy {
         });
     } else if (pdf instanceof ArrayBuffer) {
       this.src = new Uint8Array(pdf);
-    } else if (pdf && typeof pdf === 'string') {
+    } else if (typeof pdf === 'string') {
       this.src = pdf.toString();
+    } else {
+      this.src = null;
     }
   }
   @Input() public height;
