@@ -28,14 +28,18 @@ mat-progress-spinner {
   pdf-viewer.rendered .ng2-pdf-viewer-container  {
     position: relative !important;
   }
-  
+
   .ng2-pdf-viewer-container {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
     height: unset !important;
 
-    .pdfViewer .page:last-child {
-      margin-bottom: 0 !important;
+    .pdfViewer {
+      overflow: auto !important;
+
+      .page:last-child {
+        margin-bottom: 0 !important;
+      }
     }
   }
 }
