@@ -31,7 +31,7 @@ export class FsPdfViewerComponent implements OnDestroy {
   @ViewChild(PdfViewerComponent)
   public pdfViewer: PdfViewerComponent;
 
-  @Input() 
+  @Input()
   public set pdf(pdf: string | ArrayBuffer | Blob | Uint8Array | URL | FsFile | FsApiFile) {
     this.rendered = false;
     if (pdf instanceof FsApiFile || pdf instanceof FsFile || pdf instanceof Blob) {
@@ -105,10 +105,11 @@ export class FsPdfViewerComponent implements OnDestroy {
 
   public zoomIn(): void {
     this.zoom += .25;
+
   }
 
   public zoomOut(): void {
-    this.zoom -= .25;
+    this.zoom = Math.max(this.zoom - .25, 0.1);
   }
 
   public ngOnDestroy(): void {
