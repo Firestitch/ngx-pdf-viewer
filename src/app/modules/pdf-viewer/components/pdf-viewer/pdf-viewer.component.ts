@@ -17,14 +17,24 @@ import { FsFile } from '@firestitch/file';
 import { Observable, of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
-import { PdfViewerComponent, RenderTextMode } from 'ng2-pdf-viewer';
+import { PdfViewerComponent, RenderTextMode, PdfViewerModule } from 'ng2-pdf-viewer';
+import { MatMiniFabAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgClass } from '@angular/common';
 
 
 @Component({
-  selector: 'fs-pdf-viewer',
-  templateUrl: './pdf-viewer.component.html',
-  styleUrls: ['./pdf-viewer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'fs-pdf-viewer',
+    templateUrl: './pdf-viewer.component.html',
+    styleUrls: ['./pdf-viewer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatMiniFabAnchor,
+        MatIcon,
+        PdfViewerModule,
+        NgClass,
+    ],
 })
 export class FsPdfViewerComponent implements OnDestroy {
 

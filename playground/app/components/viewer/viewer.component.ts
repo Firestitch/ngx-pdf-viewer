@@ -1,12 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
+import { FsPdfViewerComponent } from '../../../../src/app/modules/pdf-viewer/components/pdf-viewer/pdf-viewer.component';
 
 
 @Component({
-  selector: 'app-viewer',
-  templateUrl: './viewer.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-viewer',
+    templateUrl: './viewer.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [FsPdfViewerComponent],
 })
 export class ViewerComponent implements OnInit {
 
