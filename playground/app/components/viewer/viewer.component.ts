@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 
 import { FsApi } from '@firestitch/api';
 import { FsPdfViewerComponent } from '../../../../src/app/modules/pdf-viewer/components/pdf-viewer/pdf-viewer.component';
@@ -12,14 +12,12 @@ import { FsPdfViewerComponent } from '../../../../src/app/modules/pdf-viewer/com
     imports: [FsPdfViewerComponent],
 })
 export class ViewerComponent implements OnInit {
+  private _api = inject(FsApi);
+  private _cdRef = inject(ChangeDetectorRef);
+
 
   public pdf;
   public blob: Blob;
-
-  constructor(
-    private _api: FsApi,
-    private _cdRef: ChangeDetectorRef,
-  ) { }
 
   public ngOnInit(): void {
     this.load();
