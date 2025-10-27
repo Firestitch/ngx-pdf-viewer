@@ -1,22 +1,22 @@
 <div class="container">
-  <ng-container *ngIf="rendered && zoomEnabled">
+  @if (rendered && zoomEnabled) {
     <div class="action">
       <a
-          mat-mini-fab
-          (click)="zoomIn()">
+        mat-mini-fab
+        (click)="zoomIn()">
         <mat-icon>
           zoom_in
         </mat-icon>
       </a>
       <a
-          mat-mini-fab
-          (click)="zoomOut()">
+        mat-mini-fab
+        (click)="zoomOut()">
         <mat-icon>
           zoom_out
         </mat-icon>
       </a>
     </div>
-  </ng-container>
+  }
   <pdf-viewer
     [ngClass]="{ rendered: rendered }"
     [autoresize]="true"
@@ -29,6 +29,6 @@
     [original-size]="false">
   </pdf-viewer>
   <!-- <ng-container *ngIf="!src">
-    <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
-  </ng-container> -->
+  <mat-progress-spinner [mode]="'indeterminate'"></mat-progress-spinner>
+</ng-container> -->
 </div>

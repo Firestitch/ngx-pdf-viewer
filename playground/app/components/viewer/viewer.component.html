@@ -1,11 +1,11 @@
-<ng-container *ngIf="blob">
+@if (blob) {
   <fs-pdf-viewer
     [pdf]="blob"
     (init)="inited()">
   </fs-pdf-viewer>
-</ng-container>
+}
 <!-- <br>
 <br>
-<br>
-<br>
-<fs-pdf-viewer [pdf]="pdf"></fs-pdf-viewer> -->
+  <br>
+    <br>
+      <fs-pdf-viewer [pdf]="pdf"></fs-pdf-viewer> -->
